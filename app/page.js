@@ -100,13 +100,13 @@ export default function Home() {
             Over 20,000 website accessibility lawsuits are filed every year. Get a fast, no-cost scan now and know
             where your site stands.
           </p>
-          <form className="scan-form" onSubmit={handleSubmit}>
+          <form className="scan-form" onSubmit={handleSubmit} noValidate>
             <label htmlFor="site-url" className="sr-only">
               Website URL
             </label>
             <input
               id="site-url"
-              type="url"
+              type="text"
               value={url}
               onChange={(event) => setUrl(event.target.value)}
               placeholder="Enter your website URL — e.g. https://example.com"

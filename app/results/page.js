@@ -149,14 +149,13 @@ export default function ResultsPage() {
             </div>
           ) : (
             <>
-              <form className="email-form" onSubmit={handleEmailSubmit}>
+              <form className="email-form" onSubmit={handleEmailSubmit} noValidate>
                 <input
-                  type="email"
+                  type="text"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                   placeholder="Enter your email"
                   aria-label="Email for full report"
-                  required
                 />
                 <button type="submit" disabled={emailLoading}>{emailLoading ? 'Sending your report...' : 'Get full report'}</button>
               </form>
