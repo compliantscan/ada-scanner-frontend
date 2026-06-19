@@ -1,23 +1,66 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const scanStatuses = [
+  'Loading your site...',
+  'Checking color contrast...',
+  'Scanning form labels...',
+  'Reviewing landmark structure...',
+  'Analyzing headings and labels...',
+];
+
+function isValidFullUrl(value) {
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
 
 export default function Home() {
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null);
+  const [scanStatus, setScanStatus] = useState(scanStatuses[0]);
   const [error, setError] = useState(null);
+  const intervalRef = useRef(null);
+  const timeoutRef = useRef(null);
+
+  useEffect(() => {
+    if (!loading) return;
+
+    let index = 0;
+    setScanStatus(scanStatuses[index]);
+    intervalRef.current = setInterval(() => {
+      index = (index + 1) % scanStatuses.length;
+      setScanStatus(scanStatuses[index]);
+    }, 4000);
+
+    timeoutRef.current = setTimeout(() => {
+      setLoading(false);
+      setError('Scan timed out. Please try again or check your URL.');
+    }, 55000);
+
+    return () => {
+      clearInterval(intervalRef.current);
+      clearTimeout(timeoutRef.current);
+    };
+  }, [loading]);
 
   async function handleSubmit(event) {
     event.preventDefault();
     setError(null);
-    setResult(null);
 
     const trimmedUrl = url.trim();
     if (!trimmedUrl) {
       setError('Please enter a URL to scan.');
+      return;
+    }
+
+    if (!isValidFullUrl(trimmedUrl)) {
+      setError('Please enter a full URL, including https://');
       return;
     }
 
@@ -35,13 +78,14 @@ export default function Home() {
       const payload = await response.json();
 
       if (!response.ok) {
-        throw new Error(payload.message || 'Scan request failed');
+        const errorText = payload?.message || 'We couldn\'t scan that site. Double check the URL and try again.';
+        throw new Error(errorText);
       }
 
-      setResult(payload);
+      sessionStorage.setItem('adaScanResult', JSON.stringify(payload));
+      window.location.href = '/results';
     } catch (err) {
-      setError(err.message || 'Unable to complete the scan.');
-    } finally {
+      setError(err.message || 'We couldn\'t scan that site. Double check the URL and try again.');
       setLoading(false);
     }
   }
@@ -74,33 +118,11 @@ export default function Home() {
             </button>
           </form>
           {error && <p className="message error">{error}</p>}
-          {result && (
-            <div className="result-card">
-              <p className="result-label">Scan complete</p>
-              <div className="result-summary">
-                <div>
-                  <span>{result.summary.totalViolations}</span>
-                  <p>Violations</p>
-                </div>
-                <div>
-                  <span>{result.summary.passes}</span>
-                  <p>Passes</p>
-                </div>
-                <div>
-                  <span>{result.summary.incomplete}</span>
-                  <p>Incomplete</p>
-                </div>
-              </div>
-              <button
-                type="button"
-                className="scan-button redirect-button"
-                onClick={() => {
-                  sessionStorage.setItem('adaScanResult', JSON.stringify(result));
-                  window.location.href = '/results';
-                }}
-              >
-                View full preview
-              </button>
+          {loading && (
+            <div className="loading-panel">
+              <div className="spinner" />
+              <p className="loading-title">Scanning your website</p>
+              <p className="loading-status">{scanStatus}</p>
             </div>
           )}
         </div>

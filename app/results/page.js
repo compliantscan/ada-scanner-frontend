@@ -12,6 +12,10 @@ const severityStyles = {
   minor: { label: 'Minor', color: '#14b8a6' },
 };
 
+function isValidEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
 export default function ResultsPage() {
   const [scan, setScan] = useState(null);
   const [email, setEmail] = useState('');
@@ -58,7 +62,7 @@ export default function ResultsPage() {
     setEmailError(null);
     setEmailSuccess(null);
 
-    if (!email) {
+    if (!email || !isValidEmail(email)) {
       setEmailError('Please enter a valid email address.');
       return;
     }
@@ -76,13 +80,12 @@ export default function ResultsPage() {
 
       const payload = await response.json();
       if (!response.ok) {
-        throw new Error(payload.message || 'Unable to send the report.');
+        throw new Error(payload.message || 'Something went wrong — please try again.');
       }
 
-      setEmailSuccess('Report is on its way. Check your inbox shortly.');
-      setEmail('');
+      setEmailSuccess(`Check your inbox — your full ADA compliance report is on its way to ${email}.`);
     } catch (err) {
-      setEmailError(err.message || 'Unable to send the report.');
+      setEmailError(err.message || 'Something went wrong — please try again.');
     } finally {
       setEmailLoading(false);
     }
@@ -140,19 +143,26 @@ export default function ResultsPage() {
         <div className="more-violations-blur">
           <p className="more-violations-count">{remaining} more violation{remaining === 1 ? '' : 's'} detected</p>
           <p>Your site has {remaining} more violations. Enter your email to get the full report.</p>
-          <form className="email-form" onSubmit={handleEmailSubmit}>
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="Enter your email"
-              aria-label="Email for full report"
-              required
-            />
-            <button type="submit" disabled={emailLoading}>{emailLoading ? 'Sending...' : 'Get full report'}</button>
-          </form>
-          {emailError && <p className="message error">{emailError}</p>}
-          {emailSuccess && <p className="message success">{emailSuccess}</p>}
+          {emailSuccess ? (
+            <div className="email-confirmation">
+              <p>{emailSuccess}</p>
+            </div>
+          ) : (
+            <>
+              <form className="email-form" onSubmit={handleEmailSubmit}>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="Enter your email"
+                  aria-label="Email for full report"
+                  required
+                />
+                <button type="submit" disabled={emailLoading}>{emailLoading ? 'Sending your report...' : 'Get full report'}</button>
+              </form>
+              {emailError && <p className="message error">{emailError}</p>}
+            </>
+          )}
         </div>
       </section>
 
