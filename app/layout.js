@@ -18,6 +18,13 @@ export default function RootLayout({ children }) {
               </svg>
               <span>CompliantScan</span>
             </a>
+            <nav className="site-nav">
+              <a href="/">Home</a>
+              <a href="/#scanner">Scanner</a>
+              <a href="/#features">Features</a>
+              <a href="/pricing">Pricing</a>
+              <a href="/#contact">Contact</a>
+            </nav>
           </div>
         </header>
         {children}

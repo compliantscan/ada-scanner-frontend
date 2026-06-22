@@ -46,6 +46,7 @@ input {
   height: 56px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .site-logo {
@@ -60,6 +61,22 @@ input {
 }
 
 .site-logo:hover { color: #1d4ed8; }
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.site-nav a {
+  text-decoration: none;
+  color: #475569;
+  font-weight: 600;
+  font-size: 0.94rem;
+  transition: color 0.2s;
+}
+
+.site-nav a:hover { color: #1d4ed8; }
 
 .hero-section {
   padding: 40px 0 32px;
@@ -873,6 +890,7 @@ h1 {
 
 @media (max-width: 760px) {
   .page-container { padding: 24px 16px 44px; }
+  .site-nav { display: none; }
   .scan-form,
   .email-form,
   .score-layout,
