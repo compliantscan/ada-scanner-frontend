@@ -81,6 +81,10 @@ export default function PaidReportPage() {
             <div><span>Score</span><strong>{report.executiveSummary.score}</strong></div>
             <div><span>Risk</span><strong>{report.executiveSummary.riskLevel}</strong></div>
             <div><span>Fix time</span><strong>{report.executiveSummary.estimatedFixTime}</strong></div>
+            <div><span>Critical</span><strong>{report.executiveSummary.severityCounts?.critical || 0}</strong></div>
+            <div><span>Serious</span><strong>{report.executiveSummary.severityCounts?.serious || 0}</strong></div>
+            <div><span>Moderate</span><strong>{report.executiveSummary.severityCounts?.moderate || 0}</strong></div>
+            <div><span>Minor</span><strong>{report.executiveSummary.severityCounts?.minor || 0}</strong></div>
             <button className="scan-button" onClick={downloadPdf}>Download PDF</button>
           </div>
           <h2>Priority checklist</h2>

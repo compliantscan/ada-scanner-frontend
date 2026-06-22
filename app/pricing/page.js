@@ -1,4 +1,4 @@
-const plans = [
+﻿const plans = [
   ['Starter', 'Full report, AI fixes, branded PDF export'],
   ['Pro', 'Everything in Starter plus compliance badge HTML'],
   ['Business', 'Everything in Pro plus white-label report branding'],

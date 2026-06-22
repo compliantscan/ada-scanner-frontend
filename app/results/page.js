@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
@@ -79,6 +79,10 @@ export default function ResultsPage() {
   const [unlocked, setUnlocked] = useState(false);
   const [pdfError, setPdfError] = useState(null);
   const [pdfLoading, setPdfLoading] = useState(false);
+  const [showBlur, setShowBlur] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const blurTriggerRef = useRef(null);
+  const modalTriggerRef = useRef(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -87,12 +91,32 @@ export default function ResultsPage() {
     try {
       const parsed = JSON.parse(raw);
       if (parsed.scanAccessKey) sessionStorage.setItem(`adaScanAccessKey:${parsed.id}`, parsed.scanAccessKey);
-      setUnlocked(sessionStorage.getItem(`adaReportUnlocked:${parsed.id}`) === 'true');
+      const alreadyUnlocked = sessionStorage.getItem(`adaReportUnlocked:${parsed.id}`) === 'true';
+      setUnlocked(alreadyUnlocked);
       setScan(parsed);
     } catch {
       setScan(null);
     }
   }, []);
+
+  useEffect(() => {
+    if (unlocked) return;
+
+    function check() {
+      if (blurTriggerRef.current) {
+        const r = blurTriggerRef.current.getBoundingClientRect();
+        setShowBlur(r.top < window.innerHeight);
+      }
+      if (modalTriggerRef.current) {
+        const r = modalTriggerRef.current.getBoundingClientRect();
+        setShowModal(r.top < window.innerHeight);
+      }
+    }
+
+    window.addEventListener('scroll', check, { passive: true });
+    check();
+    return () => window.removeEventListener('scroll', check);
+  }, [unlocked, scan]);
 
   const visibleViolations = useMemo(() => {
     const all = scan?.violations || [];
@@ -127,6 +151,8 @@ export default function ResultsPage() {
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.message || 'Something went wrong - please try again.');
       setUnlocked(true);
+      setShowModal(false);
+      setShowBlur(false);
       sessionStorage.setItem(`adaReportUnlocked:${scan.id}`, 'true');
       setEmailSuccess(payload.message || 'Full report unlocked. The PDF is being emailed to you.');
     } catch (err) {
@@ -165,7 +191,10 @@ export default function ResultsPage() {
   }
 
   const summary = scan.executiveSummary || scan;
-  const hidden = Math.max(0, (scan.violations || []).length - 3);
+  const severityCounts = summary.severityCounts || { critical: 0, serious: 0, moderate: 0, minor: 0 };
+  const totalViolations = severityCounts.critical + severityCounts.serious + severityCounts.moderate + severityCounts.minor;
+  const hasViolations = totalViolations > 0;
+  const lockedViolations = unlocked ? [] : (scan.violations || []).slice(3);
   const expires = scan.expiresAt ? new Date(scan.expiresAt).toLocaleDateString() : '7 days';
 
   return (
@@ -175,32 +204,37 @@ export default function ResultsPage() {
         <div className="score-layout">
           <div className="score-dial" style={{ '--score': summary.score }} aria-label={`Accessibility score ${summary.score} out of 100`}>
             <span>{summary.score}</span>
-            <small>{summary.grade}</small>
           </div>
           <div>
             <span className={`risk-pill ${riskClass[summary.riskLevel] || 'minor'}`}>{summary.riskLevel}</span>
-            <h1>Your site has accessibility risk.</h1>
+            <h1>{hasViolations ? 'Your site has accessibility risk.' : 'No accessibility issues detected.'}</h1>
             <p className="hero-subtitle">
-              {unlocked
+              {!hasViolations
+                ? 'Your website appears to comply with WCAG 2.1 AA standards. Keep monitoring for changes.'
+                : unlocked
                 ? 'All violations are unlocked with source snippets, WCAG mapping, effort estimates, AI-generated fixes, PDF download, and badge code.'
                 : 'The free report shows the top 3 violations with the same full detail and code-fix quality as the paid report.'}
             </p>
-            <p className="expires-copy">
-              Settlement range {summary.settlementRange || '$5,000-$25,000'} - Estimated fix time {summary.estimatedFixTime || 'Calculating'} - Free PDF download {unlocked ? 'enabled' : 'disabled'}.
-              {!unlocked ? ` Free report expires on ${expires}.` : ''}
-            </p>
+            {hasViolations && (
+              <p className="expires-copy">
+                Settlement range {summary.settlementRange || '$5,000-$25,000'} · Estimated fix time {summary.estimatedFixTime || 'Calculating'} · Free PDF {unlocked ? 'enabled' : 'disabled'}.
+                {!unlocked ? ` Free report expires ${expires}.` : ''}
+              </p>
+            )}
           </div>
         </div>
       </section>
 
-      <section className="report-summary-grid" aria-label="Report summary">
-        <div><span>Total violations</span><strong>{scan.totalViolations}</strong></div>
-        <div><span>Shown now</span><strong>{visibleViolations.length}</strong></div>
-        <div><span>Grade</span><strong>{summary.grade}</strong></div>
-        <div><span>Risk badge</span><strong>{summary.riskLevel}</strong></div>
-      </section>
+      {hasViolations && (
+        <section className="report-summary-grid" aria-label="Report summary">
+          <div><span>Critical</span><strong>{severityCounts.critical}</strong></div>
+          <div><span>Serious</span><strong>{severityCounts.serious}</strong></div>
+          <div><span>Moderate</span><strong>{severityCounts.moderate}</strong></div>
+          <div><span>Minor</span><strong>{severityCounts.minor}</strong></div>
+        </section>
+      )}
 
-      {unlocked && (
+      {unlocked && hasViolations && (
         <section className="paid-tools-panel">
           <button className="scan-button" onClick={downloadPdf} disabled={pdfLoading}>{pdfLoading ? 'Preparing PDF...' : 'Download PDF'}</button>
           <div className="badge-code">
@@ -212,46 +246,80 @@ export default function ResultsPage() {
         </section>
       )}
 
-      <section className="trailer-section">
-        <div className="section-row">
-          <div>
-            <p className="eyebrow">Priority checklist</p>
-            <h2>{unlocked ? 'All violations, sorted by remediation priority' : 'Top 3 violations with full detail'}</h2>
+      {hasViolations && (
+        <section className="trailer-section">
+          <div className="section-row">
+            <div>
+              <p className="eyebrow">Priority checklist</p>
+              <h2>{unlocked ? 'All violations, sorted by remediation priority' : 'Top 3 violations with full detail'}</h2>
+            </div>
+            <p className="locked-note">{unlocked ? 'Full report unlocked' : 'No PDF download'}</p>
           </div>
-          <p className="locked-note">{unlocked ? 'Full report unlocked' : 'No PDF download'}</p>
-        </div>
-        <div className="free-violation-list">
-          {visibleViolations.map((violation, index) => (
-            <ViolationCard key={`${violation.ruleId}-${index}`} item={violation} index={index} />
-          ))}
-        </div>
-      </section>
-
-      {!unlocked && (
-        <section className="unlock-banner">
-          <div>
-            <p>{hidden} more violation{hidden === 1 ? '' : 's'} hidden</p>
-            <span>Missing from free view: full violation list, PDF download, monitoring setup, and compliance badge embed code.</span>
-          </div>
-          <div className="cta-row">
-            <a href="#email-unlock" className="scan-button">Enter email for full report</a>
-            <button className="secondary-button dark" onClick={() => router.push(upgradeUrl)}>Upgrade to Pro</button>
+          <div className="free-violation-list">
+            {visibleViolations.map((violation, index) => (
+              <ViolationCard key={`${violation.ruleId}-${index}`} item={violation} index={index} />
+            ))}
           </div>
         </section>
       )}
 
-      {!unlocked && (
-        <section className="lead-card" id="email-unlock">
-          <h2>Get the full report</h2>
-          <p>Enter your email to unlock all findings on this page. The PDF will be generated and emailed in the background.</p>
-          {emailSuccess ? <p className="message success">{emailSuccess}</p> : (
-            <form className="email-form" onSubmit={handleEmailSubmit} noValidate>
-              <input value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Enter your email" aria-label="Email for full report" />
-              <button type="submit" disabled={emailLoading}>{emailLoading ? 'Unlocking...' : 'Unlock full report'}</button>
-            </form>
-          )}
-          {emailError && <p className="message error">{emailError}</p>}
-        </section>
+      {/* blur trigger: placed right after the 3 visible cards */}
+      {!unlocked && hasViolations && <div ref={blurTriggerRef} style={{ height: 0 }} />}
+
+      {/* locked blurred cards */}
+      {!unlocked && hasViolations && lockedViolations.length > 0 && (
+        <div className={`gate-blurred-section${showBlur ? ' visible' : ''}`}>
+          <div className="gate-blurred-cards">
+            {lockedViolations.slice(0, 1).map((violation, index) => (
+              <ViolationCard key={`locked-${index}`} item={violation} index={index + 3} />
+            ))}
+          </div>
+          {/* modal trigger: right after the single blurred card */}
+          <div ref={modalTriggerRef} style={{ height: 0, marginTop: 80 }} />
+        </div>
+      )}
+
+      {/* full-screen overlay modal */}
+      {!unlocked && showModal && (
+        <div className="ss-backdrop" role="dialog" aria-modal="true" aria-label="Unlock full report">
+          <div className="ss-modal">
+            <div className="ss-modal-left">
+              <h2 className="ss-headline">Get the Complete ADA Compliance Report</h2>
+              <p className="ss-desc">You've only seen the first few accessibility issues.</p>
+              <p className="ss-desc">Enter your email to unlock the full report and receive a downloadable PDF with all compliance findings, severity levels, and recommended fixes.</p>
+              {emailSuccess ? (
+                <p className="message success ss-success">{emailSuccess}</p>
+              ) : (
+                <form className="ss-form" onSubmit={handleEmailSubmit} noValidate>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Work Email Address"
+                    aria-label="Work email address"
+                    className="ss-input"
+                  />
+                  <button type="submit" className="ss-cta" disabled={emailLoading}>
+                    {emailLoading ? 'Unlocking...' : 'Unlock Full Report'}
+                  </button>
+                </form>
+              )}
+              {emailError && <p className="message error">{emailError}</p>}
+              <p className="ss-trust">No spam. Report delivered instantly.</p>
+            </div>
+            <div className="ss-modal-right">
+              <h3 className="ss-right-headline">See Every Accessibility Issue Before Your Users Do</h3>
+              <ul className="ss-bullets">
+                <li><span className="ss-check">✓</span> WCAG violations detected</li>
+                <li><span className="ss-check">✓</span> Severity breakdown included</li>
+                <li><span className="ss-check">✓</span> Fix recommendations generated</li>
+                <li><span className="ss-check">✓</span> Downloadable PDF report</li>
+                <li><span className="ss-check">✓</span> Compliance summary score</li>
+              </ul>
+              <p className="ss-social-proof">Join 500+ website owners improving accessibility.</p>
+            </div>
+          </div>
+        </div>
       )}
 
       {unlocked && (
@@ -267,6 +335,10 @@ export default function ResultsPage() {
           </table>
         </section>
       )}
+
+      <section className="scan-footer">
+        <button className="scan-another-button" onClick={() => router.push('/')}>Scan another site</button>
+      </section>
     </main>
   );
 }
