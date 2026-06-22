@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
 const upgradeUrl = process.env.NEXT_PUBLIC_UPGRADE_URL || '/pricing';
 
 const riskClass = {

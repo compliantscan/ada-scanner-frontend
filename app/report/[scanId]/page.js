@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
 
 export default function PaidReportPage() {
   const { scanId } = useParams();
