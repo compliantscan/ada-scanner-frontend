@@ -3,7 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
+function getApiUrl() {
+  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
+  if (typeof window === 'undefined') return 'http://localhost:3001';
+  return window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin;
+}
+const apiUrl = getApiUrl();
 
 export default function PaidReportPage() {
   const { scanId } = useParams();
@@ -62,6 +67,19 @@ export default function PaidReportPage() {
   }
 
   return (
+    <>
+    <nav className="nav">
+      <div className="nav-inner">
+        <a href="/" className="logo">CompliantScan</a>
+        <div className="nav-links">
+          <a href="/">Home</a>
+          <a href="/#how-it-works">How it works</a>
+          <a href="/#features">Features</a>
+          <a href="/#pricing">Pricing</a>
+          <a href="/#contact">Contact</a>
+        </div>
+      </div>
+    </nav>
     <main className="page-container paid-report-page">
       <section className="hero-section compact-hero">
         <p className="eyebrow">Paid report</p>
@@ -119,5 +137,6 @@ export default function PaidReportPage() {
         </section>
       )}
     </main>
+    </>
   );
 }

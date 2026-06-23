@@ -1,157 +1,233 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import HowItWorks from './components/HowItWorks';
+import Features from './components/Features';
+import Pricing from './components/Pricing';
+import FAQ from './components/FAQ';
+import Contact from './components/Contact';
+import Footer from './components/Footer';
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
-const scanStatuses = [
-  'Loading your site...',
-  'Checking color contrast...',
-  'Scanning form labels...',
-  'Reviewing landmark structure...',
-  'Analyzing headings and labels...',
-];
-
-function isValidFullUrl(value) {
-  try {
-    const parsed = new URL(value);
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
-  } catch {
-    return false;
-  }
+function getApiUrl() {
+  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
+  if (typeof window === 'undefined') return 'http://localhost:3001';
+  return window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin;
 }
+
+const apiUrl = getApiUrl();
+
+const scanSteps = [
+  'Loading your page in a real browser...',
+  'Injecting accessibility scanner...',
+  'Testing buttons and form controls...',
+  'Checking color contrast ratios...',
+  'Scanning image alternative text...',
+  'Testing keyboard navigation...',
+  'Checking landmark and heading structure...',
+  'Generating your violation report...',
+];
 
 export default function Home() {
   const [url, setUrl] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [scanStatus, setScanStatus] = useState(scanStatuses[0]);
-  const [error, setError] = useState(null);
-  const intervalRef = useRef(null);
-  const timeoutRef = useRef(null);
+  const [scanning, setScanning] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [error, setError] = useState('');
+  const [showInputError, setShowInputError] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const inputRef = useRef(null);
+  const apiCompleteRef = useRef(false);
 
   useEffect(() => {
-    if (!loading) return;
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+    
+    // Auto-focus on desktop only
+    if (typeof window !== 'undefined' && window.innerWidth >= 768) {
+      inputRef.current?.focus();
+    }
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-    let index = 0;
-    setScanStatus(scanStatuses[index]);
-    intervalRef.current = setInterval(() => {
-      index = (index + 1) % scanStatuses.length;
-      setScanStatus(scanStatuses[index]);
-    }, 4000);
+  useEffect(() => {
+    if (!scanning) return;
 
-    timeoutRef.current = setTimeout(() => {
-      setLoading(false);
-      setError('Scan timed out. Please try again or check your URL.');
-    }, 55000);
+    const stepInterval = setInterval(() => {
+      setCurrentStep(prev => (prev + 1) % scanSteps.length);
+    }, 6000);
+
+    const progressInterval = setInterval(() => {
+      setProgress(prev => {
+        if (apiCompleteRef.current && prev >= 90) return 100;
+        if (prev >= 90 && !apiCompleteRef.current) return 90;
+        return Math.min(prev + 1, 90);
+      });
+    }, 500);
 
     return () => {
-      clearInterval(intervalRef.current);
-      clearTimeout(timeoutRef.current);
+      clearInterval(stepInterval);
+      clearInterval(progressInterval);
     };
-  }, [loading]);
+  }, [scanning]);
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-    setError(null);
+  useEffect(() => {
+    if (progress === 100 && apiCompleteRef.current) {
+      const timer = setTimeout(() => {
+        const result = sessionStorage.getItem('adaScanResult');
+        if (result) window.location.href = '/results';
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [progress]);
 
-    const trimmedUrl = url.trim();
-    if (!trimmedUrl) {
-      setError('Please enter a URL to scan.');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setShowInputError(false);
+
+    if (!url.trim()) {
+      setShowInputError(true);
+      inputRef.current?.focus();
+      setTimeout(() => setShowInputError(false), 1500);
       return;
     }
 
-    if (!isValidFullUrl(trimmedUrl)) {
-      setError('Please enter a full URL, including https://');
-      return;
+    let finalUrl = url.trim();
+    if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
+      finalUrl = 'https://' + finalUrl;
     }
 
-    setLoading(true);
+    setScanning(true);
+    setProgress(0);
+    setCurrentStep(0);
+    apiCompleteRef.current = false;
 
     try {
       const response = await fetch(`${apiUrl}/scan`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url: trimmedUrl }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: finalUrl }),
       });
 
-      const payload = await response.json();
+      const data = await response.json();
 
       if (!response.ok) {
-        const errorText = payload?.message || 'We couldn\'t scan that site. Double check the URL and try again.';
-        throw new Error(errorText);
+        throw new Error(data?.message || 'Scan failed. Please check the URL and try again.');
       }
 
-      sessionStorage.setItem('adaScanResult', JSON.stringify(payload));
-      window.location.href = '/results';
+      sessionStorage.setItem('adaScanResult', JSON.stringify(data));
+      apiCompleteRef.current = true;
+      setProgress(100);
     } catch (err) {
-      setError(err.message || 'We couldn\'t scan that site. Double check the URL and try again.');
-      setLoading(false);
+      setScanning(false);
+      setProgress(0);
+      setError(err.message || 'Scan failed. Please check the URL and try again.');
+      apiCompleteRef.current = false;
     }
-  }
+  };
 
   return (
-    <main className="page-container">
-      <section className="hero-section">
-        <div className="hero-copy">
-          <p className="eyebrow">Free ADA website accessibility scan</p>
-          <h1>Scan your website for ADA violations free — before a lawyer does it for you</h1>
-          <p className="hero-subtitle">
-            Over 20,000 website accessibility lawsuits are filed every year. Get a fast, no-cost scan now and know
-            where your site stands.
+    <>
+      <nav className="nav">
+        <div className="nav-inner">
+          <a href="/" className="logo">CompliantScan</a>
+          <div className="nav-links">
+            <a href="#hero">Home</a>
+            <a href="#how-it-works">How it works</a>
+            <a href="#features">Features</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#contact">Contact</a>
+          </div>
+        </div>
+      </nav>
+
+      <main className="container">
+        <section className="hero" id="hero">
+          <div className="eyebrow">
+            <span className="dot"></span>
+            Free website scanner
+          </div>
+
+          <h1 className="headline">
+            Is your website one lawsuit away from a{' '}
+            <span className="highlight">$25,000 fine?</span>
+          </h1>
+
+          <p className="subheadline">
+            3,117 ADA website lawsuits were filed in 2025. Scan your site free — find every violation before a lawyer does.
           </p>
-          <form className="scan-form" onSubmit={handleSubmit} noValidate>
-            <label htmlFor="site-url" className="sr-only">
-              Website URL
-            </label>
-            <input
-              id="site-url"
-              type="text"
-              value={url}
-              onChange={(event) => setUrl(event.target.value)}
-              placeholder="Enter your website URL — e.g. https://example.com"
-              className="site-input"
-              aria-label="Website URL"
-            />
-            <button type="submit" className="scan-button" disabled={loading}>
-              {loading ? 'Scanning...' : 'Scan now'}
-            </button>
-          </form>
-          {error && <p className="message error">{error}</p>}
-          {loading && (
-            <div className="loading-panel">
-              <div className="spinner" />
-              <p className="loading-title">Scanning your website</p>
-              <p className="loading-status">{scanStatus}</p>
+
+          <form className="scanner" onSubmit={handleSubmit}>
+            <label htmlFor="url" className="input-label">Enter your website URL</label>
+            <div className="input-row">
+              <input
+                ref={inputRef}
+                id="url"
+                type="text"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="https://yourwebsite.com"
+                disabled={scanning}
+                className={showInputError ? 'shake' : ''}
+              />
+              <button type="submit" disabled={scanning}>
+                {scanning ? 'Scanning...' : 'Scan free'}
+              </button>
             </div>
-          )}
-        </div>
-      </section>
 
-      <section className="how-it-works">
-        <p className="section-heading">How it works</p>
-        <div className="steps-grid">
-          <article className="step-card">
-            <p className="step-number">1</p>
-            <h2>Enter your website</h2>
-            <p>Type in any live URL and request a one-click ADA scan.</p>
-          </article>
-          <article className="step-card">
-            <p className="step-number">2</p>
-            <h2>Review the findings</h2>
-            <p>See a plain-language summary of the most important accessibility issues.</p>
-          </article>
-          <article className="step-card">
-            <p className="step-number">3</p>
-            <h2>Fix before a lawsuit</h2>
-            <p>Use the report to correct the worst problems before lawyers find them.</p>
-          </article>
-        </div>
-      </section>
+            {!scanning && !error && (
+              <p className="scanner-note">No account required · Takes under 60 seconds</p>
+            )}
 
-      <footer className="page-footer">
-        <p>© 2026 ADA Scanner. Simple website scans for accessibility compliance.</p>
-      </footer>
-    </main>
+            {scanning && (
+              <div className="progress-wrapper">
+                <div className="progress-bar">
+                  <div className="progress-fill" style={{ width: `${progress}%` }}></div>
+                </div>
+                <p className="progress-text">{scanSteps[currentStep]}</p>
+              </div>
+            )}
+
+            {error && <p className="error-message">{error}</p>}
+          </form>
+
+          <div className="trust-row">
+            <div className="trust-item">✓ WCAG 2.1 AA tested</div>
+            <div className="trust-item">✓ No credit card required</div>
+            <div className="trust-item">✓ Real browser scan</div>
+            <div className="trust-item">✓ PDF report included</div>
+          </div>
+
+          <div className="stats-row">
+            <div className="stat">
+              <div className="stat-number">3,117</div>
+              <div className="stat-label">ADA lawsuits in 2025</div>
+            </div>
+            <div className="stat">
+              <div className="stat-number">95.9%</div>
+              <div className="stat-label">Of websites fail WCAG</div>
+            </div>
+            <div className="stat">
+              <div className="stat-number">$15,000</div>
+              <div className="stat-label">Average settlement cost</div>
+            </div>
+            <div className="stat">
+              <div className="stat-number">60 sec</div>
+              <div className="stat-label">To scan your site</div>
+            </div>
+          </div>
+
+
+        </section>
+      </main>
+
+      <HowItWorks />
+      <Features />
+      <Pricing />
+      <FAQ />
+      <Contact />
+      <Footer />
+    </>
   );
 }
