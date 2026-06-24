@@ -35,20 +35,33 @@ export default function Home() {
   const [error, setError] = useState('');
   const [showInputError, setShowInputError] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const inputRef = useRef(null);
   const apiCompleteRef = useRef(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
-    
+
     // Auto-focus on desktop only
     if (typeof window !== 'undefined' && window.innerWidth >= 768) {
       inputRef.current?.focus();
     }
-    
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [menuOpen]);
 
   useEffect(() => {
     if (!scanning) return;
@@ -127,20 +140,68 @@ export default function Home() {
     }
   };
 
+  const navLinks = [
+    { href: '#hero', label: 'Home' },
+    { href: '#how-it-works', label: 'How it works' },
+    { href: '#features', label: 'Features' },
+    { href: '#pricing', label: 'Pricing' },
+    { href: '#contact', label: 'Contact' },
+  ];
+
+  const handleNavClick = (href) => {
+    setMenuOpen(false);
+    const element = document.querySelector(href);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <>
       <nav className="nav">
         <div className="nav-inner">
           <a href="/" className="logo">CompliantScan</a>
+
           <div className="nav-links">
-            <a href="#hero">Home</a>
-            <a href="#how-it-works">How it works</a>
-            <a href="#features">Features</a>
-            <a href="#pricing">Pricing</a>
-            <a href="#contact">Contact</a>
+            {navLinks.map(({ href, label }) => (
+              <a key={href} href={href}>{label}</a>
+            ))}
           </div>
+
+          <button className="nav-hamburger" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open menu">
+            {menuOpen ? (
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M4 4L16 16M16 4L4 16" stroke="#121212" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M3 5H17M3 10H17M3 15H17" stroke="#121212" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            )}
+          </button>
         </div>
       </nav>
+
+      <div
+        className={`mobile-menu-backdrop ${menuOpen ? 'active' : ''}`}
+        onClick={() => setMenuOpen(false)}
+        aria-hidden="true"
+      />
+
+      <div className={`mobile-menu ${menuOpen ? 'open' : ''}`} id="mobile-menu">
+        <nav className="mobile-menu-nav">
+          {navLinks.map(({ href, label }) => (
+            <a
+              key={href}
+              href={href}
+              className="mobile-menu-link"
+              onClick={() => handleNavClick(href)}
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
+      </div>
 
       <main className="container">
         <section className="hero" id="hero">

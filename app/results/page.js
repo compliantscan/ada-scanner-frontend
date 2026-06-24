@@ -191,6 +191,7 @@ export default function ResultsPage() {
   const [pdfLoading, setPdfLoading] = useState(false);
   const [showEmailGate, setShowEmailGate] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const blurGateRef = useRef(null);
   const fix4Ref = useRef(null);
   const router = useRouter();
@@ -226,10 +227,10 @@ export default function ResultsPage() {
   }, [unlocked, scan]);
 
   useEffect(() => {
-    if (showEmailGate) document.body.style.overflow = 'hidden';
+    if (showEmailGate || menuOpen) document.body.style.overflow = 'hidden';
     else document.body.style.overflow = '';
     return () => { document.body.style.overflow = ''; };
-  }, [showEmailGate]);
+  }, [showEmailGate, menuOpen]);
 
   const visibleViolations = useMemo(() => {
     const all = scan?.violations || [];
@@ -249,8 +250,32 @@ export default function ResultsPage() {
             <a href="/#pricing">Pricing</a>
             <a href="/#contact">Contact</a>
           </div>
+          <button
+            className="nav-hamburger"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+          >
+            <span className="hamburger-icon">{menuOpen ? '✕' : '☰'}</span>
+          </button>
         </div>
       </nav>
+
+      <div 
+        className={`mobile-menu-backdrop ${menuOpen ? 'active' : ''}`}
+        onClick={() => setMenuOpen(false)} 
+        aria-hidden="true" 
+      />
+      
+      <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
+        <nav className="mobile-menu-nav">
+          <a href="/#hero" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>Home</a>
+          <a href="/#how-it-works" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>How it works</a>
+          <a href="/#features" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>Features</a>
+          <a href="/#pricing" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>Pricing</a>
+          <a href="/#contact" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>Contact</a>
+        </nav>
+      </div>
       <main className="page-container">
         <section className="hero-section">
           <p className="eyebrow">Scan results</p>
@@ -337,8 +362,32 @@ export default function ResultsPage() {
           <a href="/#pricing">Pricing</a>
           <a href="/#contact">Contact</a>
         </div>
+        <button
+          className="nav-hamburger"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={menuOpen}
+        >
+          <span className="hamburger-icon">{menuOpen ? '✕' : '☰'}</span>
+        </button>
       </div>
     </nav>
+
+    <div 
+      className={`mobile-menu-backdrop ${menuOpen ? 'active' : ''}`}
+      onClick={() => setMenuOpen(false)} 
+      aria-hidden="true" 
+    />
+    
+    <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
+      <nav className="mobile-menu-nav">
+        <a href="/#hero" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>Home</a>
+        <a href="/#how-it-works" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>How it works</a>
+        <a href="/#features" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>Features</a>
+        <a href="/#pricing" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>Pricing</a>
+        <a href="/#contact" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>Contact</a>
+      </nav>
+    </div>
     <main className="page-container free-report-page">
       <section className="free-hero-card">
         <p className="eyebrow">{unlocked ? 'Full ADA compliance report' : 'Free ADA scan report'}</p>
@@ -485,14 +534,16 @@ export default function ResultsPage() {
       {unlocked && (
         <section className="page-breakdown">
           <h2>Page-by-page breakdown</h2>
-          <table>
-            <thead><tr><th>Page scanned</th><th>Violations</th><th>Density</th></tr></thead>
-            <tbody>
-              {(scan.pages || []).map(page => (
-                <tr key={page.url}><td>{page.url}</td><td>{page.violations}</td><td>{page.density}/page</td></tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="page-breakdown-table-wrap">
+            <table>
+              <thead><tr><th>Page scanned</th><th>Violations</th><th>Density</th></tr></thead>
+              <tbody>
+                {(scan.pages || []).map(page => (
+                  <tr key={page.url}><td>{page.url}</td><td>{page.violations}</td><td>{page.density}/page</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
       )}
 
