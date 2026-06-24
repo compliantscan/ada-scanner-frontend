@@ -49,8 +49,8 @@ function PricingModal({ plan, onClose, onSuccess }) {
   }
 
   return (
-    <div className="ss-backdrop" role="dialog" aria-modal="true" aria-label={`Get notified about ${plan.name} plan`}>
-      <div className="ss-modal">
+    <div className="ss-backdrop" role="dialog" aria-modal="true" aria-label={`Get notified about ${plan.name} plan`} onClick={onClose}>
+      <div className="ss-modal" onClick={(e) => e.stopPropagation()}>
         <div className="ss-modal-left">
           <h2 className="ss-headline">Get early access to the {plan.name} plan</h2>
           <p className="ss-desc">Enter your email and we&apos;ll notify you the moment {plan.name} launches — ${plan.monthlyPrice}/month.</p>

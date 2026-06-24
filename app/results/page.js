@@ -145,10 +145,10 @@ const PLANS = [
   },
 ];
 
-function EmailGateModal({ onClose, onSuccess, email, setEmail, loading, error, success }) {
+function EmailGateModal({ onClose, onSubmit, onSuccess, email, setEmail, loading, error, success }) {
   return (
-    <div className="ss-backdrop" role="dialog" aria-modal="true" aria-label="Unlock full report">
-      <div className="ss-modal">
+    <div className="ss-backdrop" role="dialog" aria-modal="true" aria-label="Unlock full report" onClick={onClose}>
+      <div className="ss-modal" onClick={(e) => e.stopPropagation()}>
         <div className="ss-modal-left">
           <h2 className="ss-headline">Get the Complete ADA Compliance Report</h2>
           <p className="ss-desc">You&apos;ve only seen the first few accessibility issues.</p>
@@ -156,7 +156,7 @@ function EmailGateModal({ onClose, onSuccess, email, setEmail, loading, error, s
           {success ? (
             <p className="message success ss-success">{success}</p>
           ) : (
-            <form className="ss-form" onSubmit={onClose} noValidate>
+            <form className="ss-form" onSubmit={onSubmit} noValidate>
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Work Email Address" aria-label="Work email address" className="ss-input" />
               <button type="submit" className="ss-cta" disabled={loading}>{loading ? 'Unlocking...' : 'Unlock Full Report'}</button>
             </form>
@@ -441,8 +441,8 @@ export default function ResultsPage() {
       {/* Paywall modal — backdrop + pricing cards, scroll-dismissed */}
       {!unlocked && modalOpen && (
         <>
-          <div className={`paywall-backdrop${modalOpen ? ' open' : ''}`} />
-          <div className={`paywall-modal${modalOpen ? ' open' : ''}`}>
+          <div className={`paywall-backdrop${modalOpen ? ' open' : ''}`} onClick={() => setModalOpen(false)} />
+          <div className={`paywall-modal${modalOpen ? ' open' : ''}`} onClick={(e) => e.stopPropagation()}>
             <p className="paywall-modal-eyebrow">Unlock the full report</p>
             <h2 className="paywall-modal-title">Your site has more issues to fix</h2>
             <p className="paywall-modal-sub">Choose a plan to unlock all violations, AI-generated fixes, and ongoing monitoring.</p>
@@ -478,7 +478,8 @@ export default function ResultsPage() {
           loading={emailLoading}
           error={emailError}
           success={emailSuccess}
-          onClose={handleEmailSubmit}
+          onClose={() => setShowEmailGate(false)}
+          onSubmit={handleEmailSubmit}
         />
       )}
 
