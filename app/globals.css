@@ -2323,7 +2323,7 @@ tr:last-child td { border-bottom: none; }
   left: 50%;
   transform: translate(-50%, calc(-50% + 60px));
   z-index: 51;
-  background: #fff;
+  background: transparent;
   border-radius: 16px;
   padding: 40px;
   width: min(900px, calc(100vw - 48px));

@@ -18,7 +18,7 @@ export default function Footer() {
               <p className="footer-brand">CompliantScan</p>
             </div>
             <div className="footer-contact">
-              <a href="mailto:hello@compliantscan.com">hello@compliantscan.com</a>
+              <a href="mailto:compliantscan@gmail.com">compliantscan@gmail.com</a>
               <span>ADA and WCAG compliance scanner for websites of all sizes.</span>
             </div>
           </div>
@@ -30,14 +30,15 @@ export default function Footer() {
             <a href="#pricing">Pricing</a>
             <a href="#faq">FAQ</a>
             <a href="#contact">Contact</a>
-            <a href="/privacy">Privacy Policy</a>
-            <a href="/terms">Terms of Service</a>
+            
           </nav>
 
           <div className="footer-cta-block">
             <p className="footer-cta-heading">Get started with your compliance scanner now.</p>
             <div className="footer-cta-buttons">
-              <button className="footer-btn-primary">Try CompliantScan</button>
+              <button className="footer-btn-primary" href="#hero">
+                Try CompliantScan
+              </button>
               <button className="footer-btn-secondary">Watch Demo</button>
             </div>
           </div>

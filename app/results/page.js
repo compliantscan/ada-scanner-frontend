@@ -140,7 +140,7 @@ const PLANS = [
     name: 'Agency',
     monthlyPrice: 249,
     tagline: 'For web agencies with active client portfolios',
-    features: ['25 websites monitored', 'Everything in Growth', 'Client-ready reports', 'Dedicated onboarding call', 'Custom plans available'],
+    features: ['25 websites monitored', 'Everything in Growth', 'Client-ready reports', 'Dedicated onboarding call', 'Custom plans available', 'Priority email support'],
     featured: false,
   },
 ];
@@ -427,7 +427,7 @@ export default function ResultsPage() {
             {!unlocked && lockedViolations.length > 0 && (
               <>
                 <div className="blur-gate-cards">
-                  {lockedViolations.slice(0, 2).map((violation, index) => (
+                  {lockedViolations.slice(0, 1).map((violation, index) => (
                     <ViolationCard key={`locked-${index}`} item={violation} index={index + 3} />
                   ))}
                 </div>
@@ -443,9 +443,8 @@ export default function ResultsPage() {
         <>
           <div className={`paywall-backdrop${modalOpen ? ' open' : ''}`} onClick={() => setModalOpen(false)} />
           <div className={`paywall-modal${modalOpen ? ' open' : ''}`} onClick={(e) => e.stopPropagation()}>
-            <p className="paywall-modal-eyebrow">Unlock the full report</p>
-            <h2 className="paywall-modal-title">Your site has more issues to fix</h2>
-            <p className="paywall-modal-sub">Choose a plan to unlock all violations, AI-generated fixes, and ongoing monitoring.</p>
+            
+            
             <div className="paywall-cards-grid">
               {PLANS.map((plan, i) => (
                 <div
