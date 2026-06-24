@@ -164,6 +164,7 @@ function EmailGateModal({ onClose, onSubmit, onSuccess, email, setEmail, loading
           {error && <p className="message error">{error}</p>}
           <p className="ss-trust">No spam. Report delivered instantly.</p>
         </div>
+        
         <div className="ss-modal-right">
           <h3 className="ss-right-headline">See Every Accessibility Issue Before Your Users Do</h3>
           <ul className="ss-bullets">
@@ -175,8 +176,13 @@ function EmailGateModal({ onClose, onSubmit, onSuccess, email, setEmail, loading
           </ul>
           <p className="ss-social-proof">Join 500+ website owners improving accessibility.</p>
         </div>
+        <button className="ss-back-divider back-to-report-mobile" onClick={onClose}>
+  ← Back to report
+</button>
       </div>
+      
     </div>
+    
   );
 }
 
@@ -489,34 +495,55 @@ export default function ResultsPage() {
 
       {/* Paywall modal — backdrop + pricing cards, scroll-dismissed */}
       {!unlocked && modalOpen && (
-        <>
-          <div className={`paywall-backdrop${modalOpen ? ' open' : ''}`} onClick={() => setModalOpen(false)} />
-          <div className={`paywall-modal${modalOpen ? ' open' : ''}`} onClick={(e) => e.stopPropagation()}>
-            
-            
-            <div className="paywall-cards-grid">
-              {PLANS.map((plan, i) => (
-                <div
-                  key={plan.name}
-                  className={`pricing-drawer-card${plan.featured ? ' featured' : ''}`}
-                  style={{ transitionDelay: `${i * 0.1}s` }}
-                >
-                  <h3 className="plan-name">{plan.name}</h3>
-                  <p className="plan-tagline">{plan.tagline}</p>
-                  <div className="plan-price">
-                    <span className="price-amount">${plan.monthlyPrice}</span>
-                    <span className="price-period">/mo</span>
-                  </div>
-                  <button className="plan-cta" onClick={() => setShowEmailGate(true)}>Start monitoring</button>
-                  <ul className="plan-features">
-                    {plan.features.map((f, fi) => <li key={fi}>{f}</li>)}
-                  </ul>
-                </div>
-              ))}
+  <>
+    <div
+      className={`paywall-backdrop${modalOpen ? ' open' : ''}`}
+      onClick={() => setModalOpen(false)}
+    />
+    <div
+      className={`paywall-modal${modalOpen ? ' open' : ''}`}
+      onClick={(e) => e.stopPropagation()}
+    >
+      {/* Header row */}
+     
+
+      {/* Pricing cards */}
+      <div className="paywall-cards-grid">
+        {PLANS.map((plan, i) => (
+          <div
+            key={plan.name}
+            className={`pricing-drawer-card${plan.featured ? ' featured' : ''}`}
+            style={{ transitionDelay: `${i * 0.1}s` }}
+          >
+            <h3 className="plan-name">{plan.name}</h3>
+            <p className="plan-tagline">{plan.tagline}</p>
+            <div className="plan-price">
+              <span className="price-amount">${plan.monthlyPrice}</span>
+              <span className="price-period">/mo</span>
             </div>
+            <button
+              className="plan-cta"
+              onClick={() => { setModalOpen(false); setShowEmailGate(true); }}
+            >
+              Start monitoring
+            </button>
+            <ul className="plan-features">
+              {plan.features.map((f, fi) => <li key={fi}>{f}</li>)}
+            </ul>
           </div>
-        </>
-      )}
+        ))}
+      </div>
+
+      {/* Back button */}
+      <button
+  className="secondary-button back-to-report-mobile"
+  onClick={() => setModalOpen(false)}
+>
+  ← Back to report
+</button>
+    </div>
+  </>
+)}
 
       {/* email gate modal */}
       {!unlocked && showEmailGate && (

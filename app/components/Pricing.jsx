@@ -198,7 +198,9 @@ export default function Pricing() {
             <div className="pricing-grid">
               {plans.map((plan, index) => (
                 <div key={index} className={`pricing-card${plan.featured ? ' featured' : ''}`}>
-                  <div className="plan-icon" aria-hidden="true" />
+                  <div className="plan-icon" aria-hidden="true">
+                    <img src="/logo.png" alt="CompliantScan" />
+                  </div>  
                   <h3 className="plan-name">{plan.name}</h3>
                   <p className="plan-tagline">{plan.tagline}</p>
                   <div className="plan-price">
