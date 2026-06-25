@@ -145,24 +145,23 @@ const PLANS = [
   },
 ];
 
-function EmailGateModal({ onClose, onSubmit, onSuccess, email, setEmail, loading, error, success }) {
+function EmailGateModal({ onClose, onSubmit, onSuccess, email, setEmail, loading, error, success, hiddenCount }) {
   return (
     <div className="ss-backdrop" role="dialog" aria-modal="true" aria-label="Unlock full report" onClick={onClose}>
       <div className="ss-modal" onClick={(e) => e.stopPropagation()}>
         <div className="ss-modal-left">
-          <h2 className="ss-headline">Get the Complete ADA Compliance Report</h2>
-          <p className="ss-desc">You&apos;ve only seen the first few accessibility issues.</p>
-          <p className="ss-desc">Enter your email to unlock the full report and receive a downloadable PDF with all compliance findings, severity levels, and recommended fixes.</p>
+          <h2 className="ss-headline">Your site has {hiddenCount > 0 ? hiddenCount : 'more'} more {hiddenCount === 1 ? 'issue' : 'issues'} we haven&apos;t shown you yet</h2>
+          <p className="ss-desc">Enter your email to get the complete report — every violation, every WCAG rule broken, and exactly how to fix each one (with corrected code), delivered straight to your inbox as a PDF.</p>
           {success ? (
             <p className="message success ss-success">{success}</p>
           ) : (
             <form className="ss-form" onSubmit={onSubmit} noValidate>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Work Email Address" aria-label="Work email address" className="ss-input" />
-              <button type="submit" className="ss-cta" disabled={loading}>{loading ? 'Unlocking...' : 'Unlock Full Report'}</button>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Your email address" aria-label="Your email address" className="ss-input" />
+              <button type="submit" className="ss-cta" disabled={loading}>{loading ? 'Sending...' : 'Get My Full Report →'}</button>
             </form>
           )}
           {error && <p className="message error">{error}</p>}
-          <p className="ss-trust">No spam. Report delivered instantly.</p>
+          <p className="ss-trust">No spam. Delivered in under a minute.</p>
         </div>
         
         <div className="ss-modal-right">
@@ -555,6 +554,7 @@ export default function ResultsPage() {
           success={emailSuccess}
           onClose={() => setShowEmailGate(false)}
           onSubmit={handleEmailSubmit}
+          hiddenCount={lockedViolations.length}
         />
       )}
 
