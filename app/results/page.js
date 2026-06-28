@@ -438,6 +438,7 @@ export default function ResultsPage() {
         </div>
       </section>
 
+
       {hasViolations && (
         <section className="report-summary-grid" aria-label="Report summary">
           <div><span>Critical</span><strong>{severityCounts.critical}</strong></div>
@@ -446,6 +447,23 @@ export default function ResultsPage() {
           <div><span>Minor</span><strong>{severityCounts.minor}</strong></div>
         </section>
       )}
+
+      {hasViolations && (
+        <section className="page-breakdown">
+          <h2>Page-by-page breakdown</h2>
+          <div className="page-breakdown-table-wrap">
+            <table>
+              <thead><tr><th>Page scanned</th><th>Violations</th><th>Density</th><th>Affected elements</th></tr></thead>
+              <tbody>
+                {(scan.pages || []).map(page => (
+                  <tr key={page.url}><td>{page.url}</td><td>{page.violations}</td><td>{page.density}/page</td><td>{page.affectedElements || 0}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
 
       {unlocked && hasViolations && (
         <section className="paid-tools-panel">
@@ -556,22 +574,6 @@ export default function ResultsPage() {
           onSubmit={handleEmailSubmit}
           hiddenCount={lockedViolations.length}
         />
-      )}
-
-      {unlocked && (
-        <section className="page-breakdown">
-          <h2>Page-by-page breakdown</h2>
-          <div className="page-breakdown-table-wrap">
-            <table>
-              <thead><tr><th>Page scanned</th><th>Violations</th><th>Density</th></tr></thead>
-              <tbody>
-                {(scan.pages || []).map(page => (
-                  <tr key={page.url}><td>{page.url}</td><td>{page.violations}</td><td>{page.density}/page</td></tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
       )}
 
       <section className="scan-footer">
