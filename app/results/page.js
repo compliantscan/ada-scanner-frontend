@@ -455,9 +455,23 @@ export default function ResultsPage() {
             <table>
               <thead><tr><th>Page scanned</th><th>Violations</th><th>Density</th><th>Affected elements</th></tr></thead>
               <tbody>
-                {(scan.pages || []).map(page => (
-                  <tr key={page.url}><td>{page.url}</td><td>{page.violations}</td><td>{page.density}/page</td><td>{page.affectedElements || 0}</td></tr>
-                ))}
+                {(scan.pages || []).map(page => {
+                  const fallbackAffectedElements = (scan?.violations || []).reduce((sum, violation) => {
+                    return sum + (Number.isFinite(violation.affectedElements) ? violation.affectedElements : 0);
+                  }, 0);
+                  const affectedElements = Number.isFinite(page.affectedElements)
+                    ? page.affectedElements
+                    : fallbackAffectedElements;
+
+                  return (
+                    <tr key={page.url}>
+                      <td>{page.url}</td>
+                      <td>{page.violations}</td>
+                      <td>{page.density}/page</td>
+                      <td>{affectedElements}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
