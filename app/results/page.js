@@ -350,6 +350,9 @@ export default function ResultsPage() {
 
   const summary = scan.executiveSummary || scan;
   const severityCounts = summary.severityCounts || { critical: 0, serious: 0, moderate: 0, minor: 0 };
+  const totalAffectedElements = Number.isFinite(severityCounts.totalAffectedElements)
+    ? severityCounts.totalAffectedElements
+    : (scan?.violations || []).reduce((sum, violation) => sum + (Number.isFinite(violation.affectedElements) ? violation.affectedElements : 0), 0);
   const totalViolations = severityCounts.critical + severityCounts.serious + severityCounts.moderate + severityCounts.minor;
   const hasViolations = totalViolations > 0;
   const lockedViolations = unlocked ? [] : (scan.violations || []).slice(3);
@@ -445,6 +448,7 @@ export default function ResultsPage() {
           <div><span>Serious</span><strong>{severityCounts.serious}</strong></div>
           <div><span>Moderate</span><strong>{severityCounts.moderate}</strong></div>
           <div><span>Minor</span><strong>{severityCounts.minor}</strong></div>
+          <div><span>TOTAL AFFECTED ELEMENTS</span><strong>{totalAffectedElements}</strong></div>
         </section>
       )}
 

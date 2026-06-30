@@ -1678,7 +1678,7 @@ a.contact-detail-value:hover {
 /* ── Summary grid ── */
 .report-summary-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 16px;
   margin-bottom: 24px;
 }
@@ -1692,7 +1692,8 @@ a.contact-detail-value:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  justify-content: space-between;
+  min-height: 140px;
 }
 
 .report-summary-grid span {
@@ -1701,6 +1702,9 @@ a.contact-detail-value:hover {
   color: #4b4b4b;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  max-width: 85px;
+  text-align: center;
+  line-height: 1.4;
 }
 
 .report-summary-grid strong {
