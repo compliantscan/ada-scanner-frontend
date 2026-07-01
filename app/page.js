@@ -16,6 +16,22 @@ function getApiUrl() {
 
 const apiUrl = getApiUrl();
 
+function normalizeUserUrl(url) {
+  const trimmed = typeof url === 'string' ? url.trim() : '';
+  if (!trimmed) return '';
+
+  let normalized = trimmed;
+  if (!/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(normalized)) {
+    normalized = 'https://' + normalized;
+  }
+
+  if ((normalized.match(/https?:\/\//gi) || []).length > 1) {
+    return '';
+  }
+
+  return normalized;
+}
+
 const scanSteps = [
   'Loading your page in a real browser...',
   'Injecting accessibility scanner...',
@@ -33,6 +49,7 @@ export default function Home() {
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   const [error, setError] = useState('');
+  const [inputError, setInputError] = useState('');
   const [showInputError, setShowInputError] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -100,16 +117,24 @@ export default function Home() {
     setShowInputError(false);
 
     if (!url.trim()) {
+      setInputError('Please enter a website URL.');
       setShowInputError(true);
       inputRef.current?.focus();
       setTimeout(() => setShowInputError(false), 1500);
       return;
     }
 
-    let finalUrl = url.trim();
-    if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
-      finalUrl = 'https://' + finalUrl;
+    const finalUrl = normalizeUserUrl(url);
+    if (!finalUrl) {
+      setInputError('Please enter a valid website URL like https://trustmrr.com.');
+      setShowInputError(true);
+      setScanning(false);
+      inputRef.current?.focus();
+      setTimeout(() => setShowInputError(false), 1500);
+      return;
     }
+
+    setInputError('');
 
     setScanning(true);
     setProgress(0);
@@ -237,7 +262,11 @@ export default function Home() {
               </button>
             </div>
 
-            {!scanning && !error && (
+            {inputError && (
+              <p className="input-error-message">{inputError}</p>
+            )}
+
+            {!scanning && !error && !inputError && (
               <p className="scanner-note">No account required · Takes under 60 seconds</p>
             )}
 

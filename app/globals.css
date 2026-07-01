@@ -389,6 +389,14 @@ button:disabled {
   color: #4b4b4b;
 }
 
+.input-error-message {
+  margin-top: 14px;
+  text-align: center;
+  font-family: 'Switzer', sans-serif;
+  font-size: 13px;
+  color: #d32f2f;
+}
+
 /* Progress */
 .progress-wrapper {
   margin-top: 20px;
