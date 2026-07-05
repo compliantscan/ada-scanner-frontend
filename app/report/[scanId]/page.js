@@ -96,7 +96,8 @@ export default function PaidReportPage() {
       {report && (
         <section className="paid-report-shell">
           <div className="paid-summary-grid">
-            <div><span>Score</span><strong>{report.executiveSummary.score}</strong></div>
+            <div><span>Score</span><strong>{report.executiveSummary.score}/100</strong></div>
+            <div><span>Grade</span><strong>{report.executiveSummary.grade}</strong></div>
             <div><span>Risk</span><strong>{report.executiveSummary.riskLevel}</strong></div>
             <div><span>Fix time</span><strong>{report.executiveSummary.estimatedFixTime}</strong></div>
             <div><span>Critical</span><strong>{report.executiveSummary.severityCounts?.critical || 0}</strong></div>

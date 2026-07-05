@@ -32,6 +32,62 @@ function escapeAttribute(value) {
   return String(value || '').replace(/"/g, '&quot;');
 }
 
+function renderFixDetails(item) {
+  // Priority 1: color-contrast with real data
+  if (item.fixType === 'color-contrast' && item.fix?.colorContrast) {
+    const contrast = item.fix.colorContrast || {};
+    return (
+      <div className="fix-code-grid">
+        <div>
+          <span>Current text color</span>
+          <strong>{contrast.currentTextColor || '—'}</strong>
+        </div>
+        <div>
+          <span>Current background color</span>
+          <strong>{contrast.currentBackgroundColor || 'Not detectable'}</strong>
+        </div>
+        <div>
+          <span>Suggested text color</span>
+          <strong>{contrast.suggestedTextColor || '—'}</strong>
+        </div>
+        <div>
+          <span>Resulting contrast ratio</span>
+          <strong>{contrast.resultingContrastRatio || '—'}</strong>
+        </div>
+      </div>
+    );
+  }
+
+  // Priority 2: color-contrast manual review required
+  if (item.fixType === 'color-contrast' && item.fix?.manualReviewRequired) {
+    return (
+      <div style={{
+        padding: '14px',
+        borderRadius: '8px',
+        background: '#f3f4f6',
+        borderLeft: '3px solid #9ca3af',
+        color: '#6b7280',
+      }}>
+        Manual review required — automatic color detection was not available for this violation.
+      </div>
+    );
+  }
+
+  // Priority 3: other violation types (code fix)
+  return (
+    <div className="fix-code-grid">
+      <div>
+        <span>Replace this</span>
+        <pre><code>{item.fix.replaceThis || item.elementHtml || 'Failing snippet unavailable.'}</code></pre>
+      </div>
+      <div>
+        <span>With this</span>
+        <pre><code>{item.fix.withThis}</code></pre>
+      </div>
+    </div>
+  );
+}
+
 function ViolationCard({ item, index }) {
   return (
     <article className="report-violation-card">
@@ -105,16 +161,7 @@ function ViolationCardBelowFold({ item }) {
     <article className="report-violation-card card-no-top-radius">
       <div className="fix-preview">
         <strong>{item.fix.aiGenerated ? 'AI-generated code fix' : 'Generated code fix'}</strong>
-        <div className="fix-code-grid">
-          <div>
-            <span>Replace this</span>
-            <pre><code>{item.fix.replaceThis || item.elementHtml || 'Failing snippet unavailable.'}</code></pre>
-          </div>
-          <div>
-            <span>With this</span>
-            <pre><code>{item.fix.withThis}</code></pre>
-          </div>
-        </div>
+        {renderFixDetails(item)}
         <p>{item.fix.explanation}</p>
       </div>
     </article>
@@ -150,7 +197,7 @@ function EmailGateModal({ onClose, onSubmit, onSuccess, email, setEmail, loading
     <div className="ss-backdrop" role="dialog" aria-modal="true" aria-label="Unlock full report" onClick={onClose}>
       <div className="ss-modal" onClick={(e) => e.stopPropagation()}>
         <div className="ss-modal-left">
-          <h2 className="ss-headline">Your site has {hiddenCount > 0 ? hiddenCount : 'more'} more {hiddenCount === 1 ? 'issue' : 'issues'} we haven&apos;t shown you yet</h2>
+ANTHROPIC_API_KEY=          <h2 className="ss-headline">Your site has {hiddenCount > 0 ? hiddenCount : 'more'} more {hiddenCount === 1 ? 'issue' : 'issues'} we haven&apos;t shown you yet</h2>
           <p className="ss-desc">Enter your email to get the complete report — every violation, every WCAG rule broken, and exactly how to fix each one (with corrected code), delivered straight to your inbox as a PDF.</p>
           {success ? (
             <p className="message success ss-success">{success}</p>
@@ -423,8 +470,26 @@ export default function ResultsPage() {
                 </div>
                 <div className="risk-alert-divider" />
                 <div className="risk-alert-item">
+                  <span className="risk-alert-label">Score</span>
+                  <strong className="risk-alert-value">{summary.score ?? '—'}/100</strong>
+                </div>
+                <div className="risk-alert-divider" />
+                <div className="risk-alert-item">
+                  <span className="risk-alert-label">Grade</span>
+                  <strong className="risk-alert-value">{summary.grade || '—'}</strong>
+                </div>
+                <div className="risk-alert-divider" />
+                <div className="risk-alert-item">
                   <span className="risk-alert-label">PDF report</span>
-                  <strong className="risk-alert-value">{unlocked ? '✓ Enabled' : '✗ Locked'}</strong>
+                  <strong className="risk-alert-value" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                    {!unlocked && (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flexShrink: 0 }}>
+                        <rect x="3" y="10" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 10V7a5 5 0 0 1 10 0v3"></path>
+                      </svg>
+                    )}
+                    {unlocked ? 'Enabled' : 'Locked'}
+                  </strong>
                 </div>
                 {!unlocked && (
                   <>
@@ -502,7 +567,13 @@ export default function ResultsPage() {
               <p className="eyebrow">Priority checklist</p>
               <h2>{unlocked ? 'All violations, sorted by remediation priority' : 'Top 3 violations with full detail'}</h2>
             </div>
-            <p className="locked-note">{unlocked ? 'Full report unlocked' : 'No PDF download'}</p>
+            <button
+              type="button"
+              className="locked-note locked-cta"
+              onClick={() => { setModalOpen(false); setShowEmailGate(true); }}
+            >
+              {unlocked ? 'Full report unlocked' : 'Unlock full PDF report →'}
+            </button>
           </div>
 
           <div className="fix-list-wrap">
