@@ -1,12 +1,15 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import HowItWorks from './components/HowItWorks';
 import Features from './components/Features';
 import Pricing from './components/Pricing';
 import FAQ from './components/FAQ';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import ScanReport from './components/ScanReport';
 
 function getApiUrl() {
   if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
@@ -44,6 +47,7 @@ const scanSteps = [
 ];
 
 export default function Home() {
+  const router = useRouter();
   const [url, setUrl] = useState('');
   const [scanning, setScanning] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -53,6 +57,7 @@ export default function Home() {
   const [showInputError, setShowInputError] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scanReport, setScanReport] = useState(null);
   const inputRef = useRef(null);
   const apiCompleteRef = useRef(false);
 
@@ -101,15 +106,7 @@ export default function Home() {
     };
   }, [scanning]);
 
-  useEffect(() => {
-    if (progress === 100 && apiCompleteRef.current) {
-      const timer = setTimeout(() => {
-        const result = sessionStorage.getItem('adaScanResult');
-        if (result) window.location.href = '/results';
-      }, 300);
-      return () => clearTimeout(timer);
-    }
-  }, [progress]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -156,7 +153,15 @@ export default function Home() {
 
       sessionStorage.setItem('adaScanResult', JSON.stringify(data));
       apiCompleteRef.current = true;
+
+      const scanId = data?.scanId || data?.id;
+      if (scanId) {
+        router.push(`/report/${scanId}`);
+        return;
+      }
+
       setProgress(100);
+      setScanReport(data);
     } catch (err) {
       setScanning(false);
       setProgress(0);
@@ -181,6 +186,10 @@ export default function Home() {
     }
   };
 
+  if (scanReport) {
+    return <ScanReport result={scanReport} variant="public" />;
+  }
+
   return (
     <>
       <nav className="nav">
@@ -191,6 +200,11 @@ export default function Home() {
             {navLinks.map(({ href, label }) => (
               <a key={href} href={href}>{label}</a>
             ))}
+          </div>
+
+          <div className="nav-actions">
+            <Link href="/login" className="nav-signin">Login</Link>
+            <Link href="/signup" className="nav-signup">Sign up</Link>
           </div>
 
           <button className="nav-hamburger" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open menu">
@@ -225,6 +239,12 @@ export default function Home() {
               {label}
             </a>
           ))}
+          <Link href="/login" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>
+            Login
+          </Link>
+          <Link href="/signup" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>
+            Sign up
+          </Link>
         </nav>
       </div>
 
