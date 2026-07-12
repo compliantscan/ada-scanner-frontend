@@ -1,5 +1,5 @@
-import Icon from './Icons';
-import { planFeatures } from './mockData';
+import Icon from '../Icons/Icons';
+import { planFeatures } from '../MockData/mockData';
 
 export default function PlanCard() {
   return (

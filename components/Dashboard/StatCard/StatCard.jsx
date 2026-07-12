@@ -1,4 +1,4 @@
-import Icon from './Icons';
+import Icon from '../Icons/Icons';
 
 export default function StatCard({ label, value, trend, trendDirection, icon, color, isInitialLoading }) {
   const trendClass =

@@ -1,11 +1,10 @@
 'use client';
 
 import { useDashboard } from '../context/DashboardContext';
-import Topbar from '../components/dashboard/Topbar';
-import StatCard from '../components/dashboard/StatCard';
-import ScanWebsiteCard from '../components/dashboard/ScanWebsiteCard';
-import PlanCard from '../components/dashboard/PlanCard';
-import RecentReportsTable from '../components/dashboard/RecentReportsTable';
+import StatCard from '../../components/Dashboard/StatCard/StatCard';
+import ScanWebsiteCard from '../../components/Dashboard/ScanWebsiteCard/ScanWebsiteCard';
+import PlanCard from '../../components/Dashboard/PlanCard/PlanCard';
+import RecentReportsTable from '../../components/Dashboard/RecentReportsTable/RecentReportsTable';
 
 export default function DashboardPage() {
   const { data, isInitialLoading, isRefreshing, error, refetch } = useDashboard();
@@ -61,8 +60,6 @@ export default function DashboardPage() {
 
   return (
     <>
-      <Topbar />
-
       {/* Error banner — only when no data exists */}
       {error && !data && (
         <div

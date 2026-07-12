@@ -1,0 +1,29 @@
+.heroSection {
+  width: 100%;
+  padding: 56px 48px 110px;
+}
+
+.heroGrid {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 60px;
+}
+
+@media (max-width: 960px) {
+  .heroSection {
+    padding: 40px 32px 80px;
+  }
+  .heroGrid {
+    grid-template-columns: 1fr;
+    gap: 56px;
+  }
+}
+
+@media (max-width: 640px) {
+  .heroSection {
+    padding: 32px 20px 56px;
+  }
+}

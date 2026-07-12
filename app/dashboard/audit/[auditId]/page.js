@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { getSupabaseClient } from '../../../../lib/supabaseClient';
-import ScanProgress from '../../../components/dashboard/audit/ScanProgress';
-import AuditExecutiveReport from '../../../components/dashboard/audit/AuditExecutiveReport';
+import ScanProgress from '../../../../components/Dashboard/Audit/ScanProgress';
+import AuditExecutiveReport from '../../../../components/Dashboard/Audit/AuditExecutiveReport';
 
 function getApiUrl() {
   if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;

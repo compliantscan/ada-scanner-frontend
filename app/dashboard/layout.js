@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import './dashboard.css';
-import Sidebar from '../components/dashboard/Sidebar';
-import Icon from '../components/dashboard/Icons';
+import Sidebar from '../../components/Dashboard/Sidebar/Sidebar';
+import Topbar from '../../components/Dashboard/Topbar/Topbar';
+import Icon from '../../components/Dashboard/Icons/Icons';
 import { DashboardProvider, useDashboard } from '../context/DashboardContext';
 
 // Inner layout that reads from context
@@ -13,24 +14,28 @@ function DashboardLayoutInner({ children }) {
 
   return (
     <div className="agency-dashboard">
-      <button
-        type="button"
-        className="dashboard-mobile-toggle"
-        onClick={() => setSidebarOpen(true)}
-        aria-label="Open navigation menu"
-      >
-        <Icon name="menu" />
-      </button>
+      <Topbar />
 
-      <Sidebar
-        open={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        scansThisMonth={data?.scansThisMonth ?? null}
-        monthlyLimit={data?.monthlyLimit ?? 100}
-        user={user}
-      />
+      <div className="agency-dashboard__body">
+        <button
+          type="button"
+          className="dashboard-mobile-toggle"
+          onClick={() => setSidebarOpen(true)}
+          aria-label="Open navigation menu"
+        >
+          <Icon name="menu" />
+        </button>
 
-      <div className="agency-dashboard__main">{children}</div>
+        <Sidebar
+          open={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+          scansThisMonth={data?.scansThisMonth ?? null}
+          monthlyLimit={data?.monthlyLimit ?? 100}
+          user={user}
+        />
+
+        <div className="agency-dashboard__main">{children}</div>
+      </div>
     </div>
   );
 }

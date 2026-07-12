@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useDashboardData } from '../hooks/useDashboardData';
-import { getSupabaseClient } from '../../lib/supabaseClient';
+import { getSupabaseClient, getCachedSession } from '../../lib/supabaseClient';
 import { useRouter, usePathname } from 'next/navigation';
 
 const DashboardContext = createContext(null);
@@ -24,7 +24,7 @@ export function DashboardProvider({ children }) {
   useEffect(() => {
     const supabase = getSupabaseClient();
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    getCachedSession().then((session) => {
       if (session?.user) {
         setUser(session.user);
       } else {

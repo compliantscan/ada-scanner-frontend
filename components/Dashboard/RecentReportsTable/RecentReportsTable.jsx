@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import Icon, { ScoreRing } from './Icons';
+import Icon, { ScoreRing } from '../Icons/Icons';
 
 function getApiUrl() {
   if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;

@@ -1,23 +1,17 @@
-'use client';
+import Navbar from '@/components/Navbar/Navbar';
+import Pricing from '@/components/Pricing/Pricing';
+import Footer from '@/components/Footer/Footer';
 
-import Pricing from '../components/Pricing';
-import Footer from '../components/Footer';
+export const metadata = {
+  title: 'Pricing — CompliantScan',
+  description:
+    'Simple, transparent pricing for agencies. Scan for free, upgrade for ongoing monitoring and client-ready reports.',
+};
 
 export default function PricingPage() {
   return (
     <>
-      <nav className="nav">
-        <div className="nav-inner">
-          <a href="/" className="logo">CompliantScan</a>
-          <div className="nav-links">
-            <a href="/">Home</a>
-            <a href="/#how-it-works">How it works</a>
-            <a href="/#features">Features</a>
-            <a href="/pricing">Pricing</a>
-            <a href="/#contact">Contact</a>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
       <Pricing />
       <Footer />
     </>

@@ -1,0 +1,244 @@
+.stack {
+  position: relative;
+  width: 100%;
+  padding: 0 22px 22px;
+}
+
+.sheetBack,
+.sheetMid {
+  position: absolute;
+  top: 14px;
+  bottom: 6px;
+  border-radius: 16px;
+  z-index: 0;
+}
+
+.sheetBack {
+  left: 0;
+  right: 0;
+  background: var(--color-paper-back-2);
+  transform: rotate(-1.4deg);
+}
+
+.sheetMid {
+  left: 10px;
+  right: 12px;
+  background: var(--color-paper-back-1);
+  transform: rotate(0.8deg);
+}
+
+.card {
+  position: relative;
+  z-index: 1;
+  background: var(--color-cream-paper);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(26, 26, 24, 0.06);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 24px;
+  color: var(--color-text-primary);
+  margin: 0 0 14px;
+}
+
+.website {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 6px;
+}
+
+.timestamp {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--color-icon-muted);
+  margin: 0;
+}
+
+.divider {
+  height: 1px;
+  background: var(--color-divider);
+  margin: 28px 0;
+}
+
+.sectionLabel {
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-icon-muted);
+  margin: 0 0 14px;
+}
+
+.summaryRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.summaryText {
+  font-family: var(--font-sans);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+  max-width: 320px;
+  margin: 0;
+}
+
+.statsRow {
+  display: flex;
+  gap: 36px;
+  flex-shrink: 0;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statNumber {
+  font-family: var(--font-sans);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.statLabel {
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  color: var(--color-icon-muted);
+  white-space: nowrap;
+}
+
+.severityGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.severityItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.severityLabel {
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  color: var(--color-text-secondary);
+}
+
+.severityCount {
+  font-family: var(--font-sans);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.severityBar {
+  width: 100%;
+  height: 3px;
+  border-radius: 2px;
+}
+
+.issuesList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.issueRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.issueDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.issueTitle {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-sans);
+  font-size: 14.5px;
+  color: var(--color-text-primary);
+}
+
+.issueCount {
+  font-family: var(--font-sans);
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.issueSeverity {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--color-icon-muted);
+  min-width: 64px;
+  text-align: right;
+}
+
+.viewLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 28px;
+  font-family: var(--font-sans);
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+@media (max-width: 860px) {
+  .card {
+    padding: 28px;
+  }
+  .header {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .summaryRow {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .severityGrid {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 20px;
+  }
+  .issueSeverity {
+    min-width: 56px;
+  }
+}
+
+@media (max-width: 480px) {
+  .issueRow {
+    flex-wrap: wrap;
+  }
+  .issueSeverity {
+    margin-left: 19px;
+    text-align: left;
+  }
+}

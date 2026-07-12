@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { getSupabaseClient } from '../../lib/supabaseClient';
+import { getSupabaseClient, getCachedSession } from '../../lib/supabaseClient';
 
 function getApiUrl() {
   if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
@@ -33,8 +33,7 @@ export function useDashboardData() {
       setIsInitialLoading(true);
     }
     try {
-      const supabase = getSupabaseClient();
-      const { data: { session } } = await supabase.auth.getSession();
+      const session = await getCachedSession();
 
       if (!session) {
         setIsInitialLoading(false);

@@ -106,13 +106,12 @@ export const mockReports = [
 
 export const navItems = [
   { id: 'dashboard', label: 'Dashboard', href: '/dashboard', icon: 'layout' },
-  { id: 'scans', label: 'Scans', href: '/dashboard', icon: 'search' },
+  { id: 'scans', label: 'New Scan', href: '/dashboard/scan', icon: 'search' },
   { id: 'reports', label: 'Reports', href: '/dashboard/reports', icon: 'file-text' },
-  { id: 'monitoring', label: 'Monitoring', href: '/dashboard', icon: 'activity' },
-  { id: 'clients', label: 'Clients', href: '/dashboard', icon: 'users' },
-  { id: 'team', label: 'Team', href: '/dashboard', icon: 'user-plus' },
-  { id: 'settings', label: 'Settings', href: '/dashboard', icon: 'settings' },
-  { id: 'billing', label: 'Billing', href: '/dashboard/billing', icon: 'credit-card' },
+  { id: 'monitoring', label: 'Monitoring', href: '/dashboard/monitoring', icon: 'activity' },
+  { id: 'divider', label: '', href: '', icon: '' },
+  { id: 'settings', label: 'Settings', href: '/dashboard/settings', icon: 'settings' },
+  { id: 'account', label: 'Account', href: '/dashboard/account', icon: 'user' },
 ];
 
 export const planFeatures = [
@@ -122,4 +121,58 @@ export const planFeatures = [
   'Downloadable PDF reports',
   'Priority scan processing',
   'Upgrade path to future white-label dashboard',
+];
+
+export const mockMonitoringData = [
+  {
+    id: '1',
+    url: 'constructive.co',
+    pagesMonitored: 10,
+    status: 'Healthy',
+    score: 92,
+    scoreTrend: 4,
+    scoreTrendDirection: 'up',
+    lastScan: '2 hours ago',
+    nextScan: 'Tomorrow, 9:00 AM',
+    changesDetected: 0,
+    issues: {
+      newIssues: 0,
+      fixedIssues: 3,
+      pagesMonitored: 10
+    }
+  },
+  {
+    id: '2',
+    url: 'upqode.com',
+    pagesMonitored: 18,
+    status: 'Warning',
+    score: 74,
+    scoreTrend: 7,
+    scoreTrendDirection: 'down',
+    lastScan: '5 hours ago',
+    nextScan: 'Tomorrow, 9:00 AM',
+    changesDetected: 7,
+    issues: {
+      newIssues: 7,
+      fixedIssues: 2,
+      pagesMonitored: 18
+    }
+  },
+  {
+    id: '3',
+    url: 'dd.nyc',
+    pagesMonitored: 25,
+    status: 'Critical',
+    score: 55,
+    scoreTrend: 14,
+    scoreTrendDirection: 'down',
+    lastScan: '1 day ago',
+    nextScan: 'Tomorrow, 9:00 AM',
+    changesDetected: 12,
+    issues: {
+      criticalIssues: 2,
+      seriousIssues: 5,
+      pagesMonitored: 25
+    }
+  }
 ];

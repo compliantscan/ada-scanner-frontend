@@ -1,6 +1,49 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
 @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600&display=swap');
 
+:root {
+  --color-cream: #f8f5ee;
+  --color-cream-paper: #fdfcf9;
+  --color-brand-green: #1c4532;
+  --color-brand-green-hover: #143427;
+  --color-text-primary: #1a1a18;
+  --color-text-secondary: #55534c;
+  --color-text-muted: #8a877d;
+  --color-border: rgba(26, 26, 24, 0.08);
+  --color-border-strong: rgba(26, 26, 24, 0.14);
+
+  --color-critical: #d64545;
+  --color-serious: #e08a3c;
+  --color-moderate: #e0b93c;
+  --color-minor: #3c5ee0;
+
+  --font-serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --max-width: 1280px;
+  --header-height: 84px;
+
+  /* Badge */
+  --color-badge-bg: #eaf1e9;
+  --color-badge-border: rgba(28, 69, 50, 0.14);
+  --color-badge-dot: #2f9e58;
+
+  /* Icons / muted trust row */
+  --color-icon-muted: #8a877d;
+
+  /* Executive report card */
+  --color-gauge-track: #e7e4da;
+  --color-paper-back-1: #e4ded0;
+  --color-paper-back-2: #c9c2b0;
+  --color-divider: rgba(26, 26, 24, 0.08);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand-green);
+  outline-offset: 2px;
+}
+
+
 * {
   margin: 0;
   padding: 0;

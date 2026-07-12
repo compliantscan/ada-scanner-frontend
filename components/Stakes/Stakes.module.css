@@ -1,0 +1,143 @@
+.section {
+  width: 100%;
+  background-color: var(--color-brand-green);
+  padding: 88px 80px;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.label {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 20px 0;
+}
+
+.heading {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 44px;
+  line-height: 1.2;
+  color: var(--color-cream);
+  margin: 0 0 20px 0;
+}
+
+.subheading {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.65;
+  color: rgba(248, 245, 238, 0.8);
+  max-width: 620px;
+  margin: 0 auto 56px auto;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background-color: rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 40px;
+}
+
+.statCard {
+  background-color: var(--color-brand-green);
+  padding: 40px 32px;
+  text-align: left;
+}
+
+.statValue {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 48px;
+  color: var(--color-cream);
+  margin: 0 0 16px 0;
+  line-height: 1;
+}
+
+.statLabel {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 15.5px;
+  color: var(--color-cream);
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+}
+
+.statDetail {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: rgba(248, 245, 238, 0.65);
+  margin: 0 0 16px 0;
+  line-height: 1.5;
+}
+
+.statSource {
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  color: rgba(248, 245, 238, 0.45);
+  margin: 0;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.footNote {
+  max-width: 700px;
+  margin: 0 auto;
+  padding-top: 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.footNote p {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.65;
+  color: rgba(248, 245, 238, 0.75);
+  margin: 0;
+}
+
+/* Responsive */
+
+@media (max-width: 1024px) {
+  .section {
+    padding: 64px 40px;
+  }
+
+  .heading {
+    font-size: 34px;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .statValue {
+    font-size: 40px;
+  }
+}
+
+@media (max-width: 640px) {
+  .section {
+    padding: 48px 24px;
+  }
+
+  .heading {
+    font-size: 26px;
+  }
+
+  .subheading {
+    margin-bottom: 40px;
+  }
+
+  .statCard {
+    padding: 32px 24px;
+  }
+}
