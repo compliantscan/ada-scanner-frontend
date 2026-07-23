@@ -128,6 +128,9 @@ export default function ReportFree({ scanData }) {
   const scanDate = scanData?.timestamp || scanData?.createdAt || scanData?.created_at
     ? new Date(scanData.timestamp || scanData.createdAt || scanData.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })
     : 'Recently';
+  const homepageScreenshot = scanData?.homepageScreenshot
+    || scanData?.pages?.[0]?.homepageScreenshot
+    || null;
 
   const score = summary.score || 0;
   let scoreLabel = 'Poor';
@@ -154,15 +157,21 @@ export default function ReportFree({ scanData }) {
         <aside className={styles.sidebar}>
           <div className={styles.thumbnailCard}>
             <div className={styles.thumbnail}>
-              <div className={styles.thumbnailTopBar} />
-              <div className={styles.thumbnailContent}>
-                <div className={styles.thumbnailTextBlock}>
-                  <span className={styles.thumbnailHeadline}>Elevating brands</span>
-                  <span className={styles.thumbnailHeadline}>through thoughtful design</span>
-                  <span className={styles.thumbnailCta} />
+              {homepageScreenshot ? (
+                <img
+                  className={styles.thumbnailScreenshot}
+                  src={homepageScreenshot}
+                  alt={`Homepage of ${domain}`}
+                />
+              ) : (
+                <div className={styles.thumbnailFallback}>
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.5" />
+                    <path d="M3 8h18M7 6h.01M10 6h.01" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  </svg>
+                  <span>Homepage preview unavailable</span>
                 </div>
-                <div className={styles.thumbnailImageBlock} />
-              </div>
+              )}
             </div>
             <p className={styles.domain}>{domain}</p>
             <p className={styles.metaText}>Scanned on {scanDate}</p>
