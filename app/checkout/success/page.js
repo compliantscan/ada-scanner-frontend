@@ -16,7 +16,7 @@ export default function CheckoutSuccessPage() {
     <>
       <nav className="nav">
         <div className="nav-inner">
-          <a href="/" className="logo"><img src="/compliantscan-mark.png" alt="" />CompliantScan</a>
+          <a href="/" className="logo">CompliantScan</a>
           <div className="nav-links">
             <a href="/">Home</a>
             <a href="/#pricing">Pricing</a>

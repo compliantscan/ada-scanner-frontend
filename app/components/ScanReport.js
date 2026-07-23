@@ -296,7 +296,7 @@ export default function ScanReport({ result, variant = 'public', title }) {
     <>
       <nav className="nav">
         <div className="nav-inner">
-          <a href="/" className="logo"><img src="/compliantscan-mark.png" alt="" />CompliantScan</a>
+          <a href="/" className="logo">CompliantScan</a>
           <div className="nav-links">
             <a href="/#hero">Home</a>
             <a href="/#how-it-works">How it works</a>
