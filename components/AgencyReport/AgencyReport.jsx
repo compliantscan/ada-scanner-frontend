@@ -11,13 +11,15 @@ const FINDING_GUIDANCE = {
   'color-contrast': {
     title: 'Some text may be difficult to read',
     area: 'Color and visual clarity',
-    why: 'Low contrast can make content harder to read for people with low vision, in bright light, or on smaller screens.',
-    check: 'Review the foreground and background color pair, then confirm it meets the selected WCAG contrast target.',
-    value: 'A small design-token update can often improve many repeated elements at once.',
+    relatedCheck: 'Minimum color contrast',
+    why: 'Low contrast can make text harder to read for people with low vision or in bright light.',
+    check: 'Verify the text and background color pair meets the selected contrast target.',
+    value: 'A shared color-token fix can improve many repeated elements.',
   },
   label: {
     title: 'Form fields need clearer labels',
     area: 'Forms and lead capture',
+    relatedCheck: 'Accessible form label',
     why: 'Visitors using screen readers may not know what information a field is asking them to enter.',
     check: 'Connect every visible label to its input and give icon-only fields an accessible name.',
     value: 'Clearer forms reduce friction in contact, quote, and signup flows.',
@@ -25,6 +27,7 @@ const FINDING_GUIDANCE = {
   'button-name': {
     title: 'Some buttons need a meaningful name',
     area: 'Navigation and interaction',
+    relatedCheck: 'Accessible button name',
     why: 'An unlabeled button can be announced only as “button,” leaving its purpose unclear.',
     check: 'Add visible text or an accessible name that describes the action.',
     value: 'Reusable button fixes improve navigation across the whole site.',
@@ -32,13 +35,15 @@ const FINDING_GUIDANCE = {
   'link-name': {
     title: 'Some links do not explain where they go',
     area: 'Navigation and calls to action',
-    why: 'People navigating by assistive technology need a useful link name to understand the destination.',
-    check: 'Use descriptive link text or an accessible label; avoid empty or icon-only links.',
-    value: 'More descriptive calls to action help every visitor scan the page.',
+    relatedCheck: 'Accessible link name',
+    why: 'Unclear link names make destinations hard to understand with assistive technology.',
+    check: 'Add descriptive text or an accessible name to icon-only links.',
+    value: 'Clear link names reduce ambiguity and make navigation easier for all visitors.',
   },
   'image-alt': {
     title: 'Important images need text alternatives',
     area: 'Images and content',
+    relatedCheck: 'Image text alternative',
     why: 'Without alternative text, meaningful image content may be missed by screen-reader users.',
     check: 'Add concise alt text for informative images and empty alt text for decorative images.',
     value: 'Good image descriptions make portfolio and case-study content more useful.',
@@ -46,20 +51,23 @@ const FINDING_GUIDANCE = {
   'heading-order': {
     title: 'The page heading structure needs refinement',
     area: 'Content structure',
-    why: 'A logical heading order helps visitors understand and move through the page quickly.',
-    check: 'Keep heading levels in a clear hierarchy without skipping levels for visual styling.',
-    value: 'A stronger content outline helps both accessibility and editorial consistency.',
+    relatedCheck: 'Logical heading order',
+    why: 'A logical heading order helps visitors understand and navigate the page.',
+    check: 'Keep heading levels in a clear hierarchy without skipping levels.',
+    value: 'A stronger outline improves accessibility and editorial consistency.',
   },
   region: {
     title: 'Some content sits outside clear page regions',
     area: 'Page structure',
-    why: 'Landmark regions help assistive-technology users jump between major areas of a page.',
-    check: 'Wrap major sections in meaningful header, nav, main, aside, or footer landmarks.',
-    value: 'A reusable layout fix can improve every page built from the same template.',
+    relatedCheck: 'Content landmark regions',
+    why: 'Landmarks help assistive-technology users move between major page areas.',
+    check: 'Wrap major sections in meaningful header, nav, main, aside, or footer regions.',
+    value: 'One layout fix can improve every page using the same template.',
   },
   'landmark-one-main': {
     title: 'The page needs one clear main content region',
     area: 'Page structure',
+    relatedCheck: 'Single main landmark',
     why: 'A single main landmark lets visitors skip repeated navigation and reach the primary content.',
     check: 'Use one main element around the page’s unique primary content.',
     value: 'This is usually a quick template-level improvement with site-wide value.',
@@ -75,6 +83,7 @@ function domainFrom(url) {
 }
 
 function agencyFrom(domain) {
+  if (domain.toLowerCase() === 'dd.nyc') return 'DD.NYC';
   const label = domain.split('.')[0].replace(/[-_]+/g, ' ').trim();
   return label
     .split(' ')
@@ -88,11 +97,22 @@ function friendlyFinding(violation) {
   const guide = FINDING_GUIDANCE[ruleId] || {
     title: violation.title || violation.description || 'An accessibility improvement was identified',
     area: 'Website experience',
+    relatedCheck: violation.ruleId || violation.id || 'Automated accessibility check',
     why: violation.description || 'This issue may create unnecessary friction for some visitors using assistive technology.',
     check: violation.fix?.explanation || violation.help || 'Review the affected component and test the updated experience with keyboard and screen-reader navigation.',
     value: 'Resolving the shared component can improve the experience wherever it appears.',
   };
   return { ...violation, ruleId, ...guide };
+}
+
+function findingLocation(finding) {
+  const target = String(finding.target || '').toLowerCase();
+  if (/header|nav|menu/.test(target)) return 'Homepage header navigation';
+  if (/footer/.test(target)) return 'Homepage footer';
+  if (/form|input|select|textarea/.test(target)) return 'Homepage form';
+  if (/button|cta|hero/.test(target)) return 'Homepage primary content';
+  if (/main|section|article/.test(target)) return 'Homepage content area';
+  return 'Homepage';
 }
 
 function Brand() {
@@ -143,6 +163,7 @@ export default function AgencyReport({ scanData }) {
       .reduce((sum, severity) => sum + Number(severityCounts[severity] || 0), 0);
     const affectedElements = violations.reduce((sum, item) => sum + Number(item.affectedElements || 1), 0);
     const repeatedComponents = violations.filter((item) => Number(item.affectedElements || 0) > 1).length;
+    const pagesScanned = scanData?.pages?.length || summary.pagesScanned || 1;
     const dateValue = scanData?.timestamp || scanData?.createdAt || scanData?.created_at || Date.now();
     return {
       summary,
@@ -154,6 +175,8 @@ export default function AgencyReport({ scanData }) {
       totalIssues,
       affectedElements,
       repeatedComponents,
+      pagesScanned,
+      scanScope: pagesScanned === 1 ? 'Homepage only' : `${pagesScanned} pages`,
       scanDate: new Date(dateValue).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
     };
   }, [scanData]);
@@ -228,8 +251,8 @@ export default function AgencyReport({ scanData }) {
               <span className={styles.goldRule} />
               <dl className={styles.coverMeta}>
                 <div><dt><span>◎</span> Website scanned</dt><dd>{report.domain}</dd></div>
-                <div><dt><span>□</span> Scan date</dt><dd>{report.scanDate}</dd></div>
-                <div><dt><span>◇</span> Prepared using</dt><dd>CompliantScan</dd></div>
+                <div><dt><span>□</span> Scan scope</dt><dd>{report.scanScope}</dd></div>
+                <div><dt><span>◇</span> Scan date</dt><dd>{report.scanDate}</dd></div>
               </dl>
               <p className={styles.coverNote}>Automated accessibility scan based on selected WCAG checks.</p>
             </div>
@@ -252,17 +275,17 @@ export default function AgencyReport({ scanData }) {
           <div className={styles.pageIntro}>
             <span className={styles.eyebrow}>What the scan found</span>
             <h2>A clear starting point for<br />{report.agency}</h2>
-            <p>The scan found patterns worth reviewing across the website. The opportunity is to fix shared components first, then keep those improvements in place as the site changes.</p>
+            <p>This automated review covered {report.scanScope.toLowerCase()}. The opportunity is to fix shared components first, then keep those improvements in place as the site changes.</p>
+          </div>
+          <div className={styles.automatedSummary}>
+            <span>Automated scan summary</span>
+            <p><strong>{report.totalIssues} issue types</strong> were detected across <strong>{report.affectedElements} elements</strong>. Most findings came from repeated navigation and layout patterns, meaning a small number of component-level fixes may resolve many instances.</p>
           </div>
           <div className={styles.summaryGrid}>
-            <div className={styles.scorePanel}>
-              <span>Accessibility score</span>
-              <strong>{report.summary.score ?? 0}<small>/100</small></strong>
-              <p>{report.summary.score >= 90 ? 'Strong automated baseline' : report.summary.score >= 70 ? 'Good foundations with room to improve' : 'Several useful improvements identified'}</p>
-            </div>
             <div className={styles.metricPanel}><strong>{report.totalIssues}</strong><span>issue types</span></div>
             <div className={styles.metricPanel}><strong>{report.affectedElements}</strong><span>affected elements</span></div>
             <div className={styles.metricPanel}><strong>{report.repeatedComponents}</strong><span>repeated patterns</span></div>
+            <div className={styles.metricPanel}><strong>{report.pagesScanned}</strong><span>page{report.pagesScanned === 1 ? '' : 's'} scanned</span></div>
           </div>
           <div className={styles.severityTable}>
             {['critical', 'serious', 'moderate', 'minor'].map((severity) => (
@@ -297,12 +320,17 @@ export default function AgencyReport({ scanData }) {
                   </div>
                   <div className={styles.findingDetails}>
                     {finding.screenshotDataUrl ? (
-                      <img src={finding.screenshotDataUrl} alt={`Affected area for ${finding.title}`} />
+                      <figure className={styles.findingEvidence}>
+                        <img src={finding.screenshotDataUrl} alt={`Affected area for ${finding.title}`} />
+                        <figcaption>Example from scan</figcaption>
+                      </figure>
                     ) : (
                       <div className={styles.findingPlaceholder}><span>Detected on</span><strong>{report.domain}</strong></div>
                     )}
                     <dl>
+                      <div><dt>Found on</dt><dd>{findingLocation(finding)}</dd></div>
                       <div><dt>Affected</dt><dd>{finding.affectedElements || 0} element{finding.affectedElements === 1 ? '' : 's'}</dd></div>
+                      <div><dt>Related check</dt><dd>{finding.relatedCheck}</dd></div>
                       <div><dt>Why it matters</dt><dd>{finding.why}</dd></div>
                       <div><dt>Developer check</dt><dd>{finding.check}</dd></div>
                       <div><dt>Agency value</dt><dd>{finding.value}</dd></div>
@@ -317,15 +345,16 @@ export default function AgencyReport({ scanData }) {
         <PageFrame number={4} title="Monitoring after launch">
           <div className={styles.pageIntro}>
             <span className={styles.eyebrow}>Keep improvements in place</span>
-            <h2>Accessibility is part of the<br />launch workflow</h2>
-            <p>Websites change after launch. New pages, campaigns, plug-ins, and client edits can reintroduce issues even when the original build was carefully reviewed.</p>
+            <h2>Accessibility does not<br />stop at launch</h2>
+            <p>New content, plugin updates, campaign pages, and design changes can introduce new accessibility barriers after the original website has been reviewed.</p>
           </div>
           <div className={styles.workflow}>
             {[
-              ['01', 'Scan', 'Run a repeatable automated check across the selected sites.'],
-              ['02', 'Prioritize', 'Group findings by impact, frequency, and shared component.'],
-              ['03', 'Fix & verify', 'Update the source component and confirm the result.'],
-              ['04', 'Monitor', 'Re-scan after launches and content changes.'],
+              ['01', 'Baseline scan', 'Establish the current automated accessibility baseline.'],
+              ['02', 'Issues fixed', 'Prioritize shared components and verify the updates.'],
+              ['03', 'Website changes', 'New content and releases alter the experience.'],
+              ['04', 'Rescan', 'Check the website again after those changes.'],
+              ['05', 'Report', 'Show new issues and what has been resolved.'],
             ].map(([number, title, copy]) => (
               <div key={number}><span>{number}</span><h3>{title}</h3><p>{copy}</p></div>
             ))}
@@ -347,8 +376,8 @@ export default function AgencyReport({ scanData }) {
         <PageFrame number={5} title="Founding agency pilot">
           <div className={styles.pilotHero}>
             <span className={styles.eyebrow}>Founding agency pilot</span>
-            <h2>Make accessibility review<br />part of every launch.</h2>
-            <p>A focused 30-day pilot for agencies that want a repeatable way to identify, explain, and monitor accessibility improvements.</p>
+            <h2>Add accessibility monitoring<br />to your client care plans.</h2>
+            <p>A focused 30-day pilot for one agency that wants to add repeatable accessibility scanning, reporting, and post-launch monitoring to its client services.</p>
           </div>
           <div className={styles.offerCard}>
             <div className={styles.offerPrice}>
@@ -359,11 +388,14 @@ export default function AgencyReport({ scanData }) {
             <div className={styles.offerDetails}>
               <h3>Included in the pilot</h3>
               <ul>
-                <li>Up to 5 agency or client websites</li>
-                <li>Automated accessibility snapshots</li>
-                <li>Priority findings written in plain language</li>
-                <li>Downloadable, client-ready PDF reports</li>
-                <li>Monitoring workflow and launch check-ins</li>
+                <li>Up to five client websites</li>
+                <li>One baseline automated scan per website</li>
+                <li>Prioritized findings in plain language</li>
+                <li>Developer implementation guidance</li>
+                <li>Client-ready PDF snapshots</li>
+                <li>One follow-up rescan per website</li>
+                <li>New and resolved issue summary</li>
+                <li>Personal onboarding and support</li>
               </ul>
             </div>
           </div>
@@ -371,13 +403,17 @@ export default function AgencyReport({ scanData }) {
             <div><span>After the pilot</span><strong>$199/month</strong></div>
             <p>Continue only if the workflow is useful for your agency. No long-term commitment is required for the pilot.</p>
           </div>
+          <div className={styles.pilotCta}>
+            <div><span>Start with three websites</span><p>Reply to this email with <strong>“Pilot”</strong> and three website URLs. I’ll prepare the first scans and reports within 48 hours.</p></div>
+            <strong>Pilot →</strong>
+          </div>
           <div className={styles.pilotFooter}>
             <div>
               <span>Prepared for</span>
               <strong>{report.agency}</strong>
               <small>{report.domain}</small>
             </div>
-            <a href="mailto:hello@compliantscan.com">hello@compliantscan.com →</a>
+            <a href="mailto:hello@compliantscan.com?subject=Pilot">hello@compliantscan.com</a>
           </div>
         </PageFrame>
       </div>
