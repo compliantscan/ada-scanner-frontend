@@ -100,8 +100,19 @@ export default function ScanningProgress() {
   }, [done, router]);
 
   if (!url) {
-    if (typeof window !== 'undefined') router.replace('/');
-    return null;
+    return (
+      <div style={{ ...page, justifyContent: 'center', alignItems: 'center', padding: '40px 24px' }}>
+        <div style={{ maxWidth: 520, width: '100%', background: 'var(--color-cream-paper)', border: '1px solid var(--color-border)', borderRadius: 16, padding: 36, textAlign: 'center' }}>
+          <p style={{ fontFamily: 'var(--font-serif)', fontSize: 30, color: 'var(--color-text-primary)', margin: '0 0 10px' }}>Choose a website to scan</p>
+          <p style={{ fontFamily: 'var(--font-sans)', fontSize: 15, lineHeight: 1.6, color: 'var(--color-text-secondary)', margin: '0 0 26px' }}>
+            No website URL was provided. Start a new scan and we will show the progress here.
+          </p>
+          <button onClick={() => router.push('/')} style={{ padding: '12px 28px', background: 'var(--color-brand-green)', color: '#fff', border: 'none', borderRadius: 8, fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}>
+            Start a scan
+          </button>
+        </div>
+      </div>
+    );
   }
 
   const displayUrl = url.replace(/^https?:\/\//, '');

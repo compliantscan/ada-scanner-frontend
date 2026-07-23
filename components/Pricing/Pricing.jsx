@@ -24,6 +24,7 @@ const PLANS = [
     annualPrice: 0,
     priceSuffix: '',
     cta: 'Start free scan',
+    href: '/',
     highlighted: false,
     features: [
       '1 website scan',
@@ -41,6 +42,7 @@ const PLANS = [
     annualPrice: 39,
     priceSuffix: '/ month',
     cta: 'Start Pro trial',
+    href: '/signup?plan=pro',
     highlighted: true,
     badge: 'Most popular',
     features: [
@@ -60,6 +62,7 @@ const PLANS = [
     annualPrice: 119,
     priceSuffix: '/ month',
     cta: 'Talk to us',
+    href: '/contact',
     highlighted: false,
     features: [
       'Unlimited monitored websites',
@@ -137,12 +140,12 @@ export default function Pricing() {
                 )}
                 {price === 0 && <p className={styles.billingNote}>No credit card required</p>}
 
-                <button
-                  type="button"
+                <a
+                  href={plan.href}
                   className={`${styles.planButton} ${plan.highlighted ? styles.planButtonPrimary : ''}`}
                 >
                   {plan.cta}
-                </button>
+                </a>
 
                 <ul className={styles.featureList}>
                   {plan.features.map((feature) => (

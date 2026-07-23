@@ -20,7 +20,21 @@ export default function ReportPreviewPage() {
     }
   }, []);
 
-  if (scan === undefined) return null;
+  if (scan === undefined) {
+    return (
+      <main
+        aria-busy="true"
+        aria-live="polite"
+        style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: 24, textAlign: 'center', fontFamily: 'var(--font-sans)', background: '#f5f3ee', color: '#17241f' }}
+      >
+        <div>
+          <div style={{ width: 38, height: 38, margin: '0 auto 18px', border: '3px solid #d8ddd8', borderTopColor: '#173f2e', borderRadius: '50%', animation: 'reportSpin .8s linear infinite' }} />
+          <p style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Preparing your report…</p>
+          <style>{'@keyframes reportSpin { to { transform: rotate(360deg); } }'}</style>
+        </div>
+      </main>
+    );
+  }
 
   if (!scan) {
     return (

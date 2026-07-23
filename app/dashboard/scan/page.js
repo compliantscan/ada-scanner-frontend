@@ -350,7 +350,7 @@ export default function ScanPage() {
             <p className="scan-privacy-desc">We never store your website content. All scans are private and confidential.</p>
           </div>
         </div>
-        <a href="#" className="scan-privacy-link">
+        <a href="/privacy" className="scan-privacy-link">
           Learn more about privacy
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 12h14M12 5l7 7-7 7" />

@@ -2,19 +2,19 @@ import styles from './Footer.module.css';
 
 const FOOTER_LINKS = {
   Product: [
-    { label: 'Features', href: '#built-for-agencies' },
-    { label: 'How it works', href: '#how-it-works' },
-    { label: 'Pricing', href: '#' },
-    { label: 'FAQ', href: '#faq' },
+    { label: 'Features', href: '/#built-for-agencies' },
+    { label: 'How it works', href: '/#how-it-works' },
+    { label: 'Pricing', href: '/pricing' },
+    { label: 'FAQ', href: '/#faq' },
   ],
   Company: [
-    { label: 'About', href: '#' },
-    { label: 'Contact', href: '#contact' },
-    { label: 'Docs', href: '#' },
+    { label: 'About', href: '/#built-for-agencies' },
+    { label: 'Contact', href: '/contact' },
+    { label: 'Docs', href: '/blogs' },
   ],
   Legal: [
-    { label: 'Privacy Policy', href: '#' },
-    { label: 'Terms of Service', href: '#' },
+    { label: 'Privacy Policy', href: '/privacy' },
+    { label: 'Terms of Service', href: '/terms' },
   ],
 };
 
