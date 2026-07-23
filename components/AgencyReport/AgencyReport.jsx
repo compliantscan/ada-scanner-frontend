@@ -444,7 +444,7 @@ export default function AgencyReport({ scanData }) {
               <strong>{report.agency}</strong>
               <small>{report.domain}</small>
             </div>
-            <a href="mailto:hello@compliantscan.com?subject=Pilot">hello@compliantscan.com</a>
+            <a href="mailto:info@compliantscan.com?subject=Pilot">info@compliantscan.com</a>
           </div>
         </PageFrame>
       </div>
