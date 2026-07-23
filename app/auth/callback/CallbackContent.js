@@ -9,11 +9,9 @@ export default function CallbackContent() {
   const router = useRouter();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
-  const [debugUrl, setDebugUrl] = useState('');
 
   useEffect(() => {
     const exchangeCode = async () => {
-      const currentUrl = window.location.href;
       const searchParams = new URLSearchParams(window.location.search);
       const hashParams = new URLSearchParams(
         window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash
@@ -21,8 +19,6 @@ export default function CallbackContent() {
       const code = searchParams.get('code') || hashParams.get('code');
       const hashError = hashParams.get('error_description') || hashParams.get('error');
       const queryError = searchParams.get('error_description') || searchParams.get('error');
-
-      setDebugUrl(currentUrl);
 
       if (hashError || queryError) {
         setError(hashError || queryError || 'Google sign-in was cancelled or failed.');
@@ -53,7 +49,12 @@ export default function CallbackContent() {
 
         router.replace('/dashboard');
       } catch (err) {
-        setError(err.message || 'Unable to complete Google sign-in.');
+        const message = err.message || 'Unable to complete Google sign-in.';
+        setError(
+          /pkce code verifier/i.test(message)
+            ? 'This sign-in attempt has expired. Please start Google sign-in again from this browser.'
+            : message
+        );
         setLoading(false);
       }
     };
@@ -66,20 +67,19 @@ export default function CallbackContent() {
       <div className="auth-card">
         <div className="auth-header">
           <p className="auth-eyebrow">CompliantScan</p>
-          <h1>{loading ? 'Finishing sign in…' : 'Sign in complete'}</h1>
+          <h1>{loading ? 'Finishing sign in…' : 'Sign in could not be completed'}</h1>
           <p>
             {loading
               ? 'We are completing your Google sign-in now.'
-              : 'You can return to the login page if something went wrong.'}
+              : 'Return to the login page and try again in this browser.'}
           </p>
         </div>
 
         {error ? (
           <div className="auth-message auth-error">
             <div>{error}</div>
-            {debugUrl ? <div style={{ marginTop: '10px', wordBreak: 'break-all' }}>Current URL: {debugUrl}</div> : null}
             <div style={{ marginTop: '12px' }}>
-              <Link href="/login" className="auth-link">Back to login</Link>
+              <Link href="/login" className="auth-link">Try sign in again</Link>
             </div>
           </div>
         ) : null}
