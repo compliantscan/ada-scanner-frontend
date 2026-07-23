@@ -42,7 +42,7 @@ function ScoreGaugeSmall({ score, label }) {
   );
 }
 
-export default function ReportFree({ scanData }) {
+export default function ReportFree({ scanData, embedded = false }) {
   const summary = scanData?.executiveSummary || scanData || {};
   const severityCounts = summary.severityCounts || { critical: 0, serious: 0, moderate: 0, minor: 0 };
   
@@ -139,19 +139,21 @@ export default function ReportFree({ scanData }) {
   else if (score >= 50) scoreLabel = 'Fair';
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div className={styles.logo}>
-          <img src="/compliantscan-mark.png" alt="" />
-          <Link href="/"><span>CompliantScan</span></Link>
-        </div>
+    <div className={`${styles.page} ${embedded ? styles.embedded : ''}`}>
+      {!embedded && (
+        <header className={styles.header}>
+          <div className={styles.logo}>
+            <img src="/compliantscan-mark.png" alt="" />
+            <Link href="/"><span>CompliantScan</span></Link>
+          </div>
 
-        <div className={styles.headerActions}>
-          <Link href="/report" className={styles.downloadButton}>
-            Get Full Report
-          </Link>
-        </div>
-      </header>
+          <div className={styles.headerActions}>
+            <Link href="/report" className={styles.downloadButton}>
+              Get Full Report
+            </Link>
+          </div>
+        </header>
+      )}
 
       <div className={styles.body}>
         <aside className={styles.sidebar}>

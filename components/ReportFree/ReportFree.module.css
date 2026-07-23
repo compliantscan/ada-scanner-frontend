@@ -3,6 +3,28 @@
   background-color: var(--color-cream);
 }
 
+.embedded {
+  min-height: auto;
+  background: transparent;
+}
+
+.embedded .body {
+  max-width: none;
+  padding: 0;
+  grid-template-columns: minmax(230px, 280px) minmax(0, 1fr);
+  gap: 20px;
+}
+
+.embedded .statsRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.embedded .severityCardsGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 /* Header */
 
 .header {
@@ -561,6 +583,11 @@
   .statsRow {
     flex-wrap: wrap;
     gap: 24px;
+  }
+
+  .embedded .body {
+    grid-template-columns: 1fr;
+    padding: 0;
   }
 }
 
