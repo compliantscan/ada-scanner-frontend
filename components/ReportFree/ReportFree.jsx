@@ -147,7 +147,7 @@ export default function ReportFree({ scanData }) {
         </div>
 
         <div className={styles.headerActions}>
-          <Link href="/signup" className={styles.downloadButton}>
+          <Link href="/report" className={styles.downloadButton}>
             Get Full Report
           </Link>
         </div>
@@ -198,13 +198,13 @@ export default function ReportFree({ scanData }) {
                 <path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3" stroke="currentColor" strokeWidth="1.5" />
               </svg>
             </span>
-            <p className={styles.unlockTitle}>Unlock Your Full Report</p>
+            <p className={styles.unlockTitle}>View Your Full Report</p>
             <p className={styles.unlockText}>
-              Create a free account to view all issues, download the full PDF
-              report, and access developer fixes.
+              Open your five-page agency snapshot, review the priority findings,
+              and download the PDF without creating an account.
             </p>
-            <Link href="/signup" className={styles.unlockButton}>
-              Create Free Account
+            <Link href="/report" className={styles.unlockButton}>
+              Open Full Report
             </Link>
           </div>
         </aside>
@@ -262,7 +262,7 @@ export default function ReportFree({ scanData }) {
                     These issues impact the most pages and users on your website.
                   </p>
                 </div>
-                <Link href="/signup" className={styles.viewAllLink}>
+                <Link href="/report" className={styles.viewAllLink}>
                   View all issues
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                     <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -307,15 +307,15 @@ export default function ReportFree({ scanData }) {
                 </svg>
               </span>
               <div>
-                <p className={styles.ctaBannerTitle}>Get AI-Powered Fixes & Full Report</p>
+                <p className={styles.ctaBannerTitle}>Get Your Full Agency Report</p>
                 <p className={styles.ctaBannerText}>
-                  Create a free account to unlock all issues, get code-level
-                  fixes, and download your complete accessibility report.
+                  Review the priority findings and download a client-ready
+                  five-page PDF. No login required.
                 </p>
               </div>
             </div>
-            <Link href="/signup" className={styles.ctaBannerButton}>
-              Create Free Account
+            <Link href="/report" className={styles.ctaBannerButton}>
+              Open Full Report
             </Link>
           </section>
         </main>
