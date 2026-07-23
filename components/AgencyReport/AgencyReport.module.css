@@ -8,9 +8,12 @@
 .downloadError { max-width: 860px; margin: -10px auto 18px; padding: 12px 16px; border-radius: 10px; color: #8d2d2d; background: #fff1f0; font-size: 13px; }
 .pageStack { display: grid; gap: 28px; justify-content: center; }
 .reportPage { position: relative; width: min(900px, calc(100vw - 40px)); min-height: 1273px; padding: 62px 66px 70px; overflow: hidden; background: #fff; box-shadow: 0 18px 55px rgba(17,38,28,.12); }
-.pageHeader { height: 48px; padding-bottom: 18px; border-bottom: 1px solid #d8d7ce; display: flex; align-items: center; justify-content: space-between; color: #68736d; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; }
-.brand { display: inline-flex; align-items: center; gap: 9px; color: #111b17; font-size: 17px; font-weight: 700; letter-spacing: -.03em; text-transform: none; }
+.pageHeader { height: 48px; padding-bottom: 18px; border-bottom: 1px solid #d8d7ce; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; color: #68736d; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; }
+.pageTitle { justify-self: center; }
+.brand { display: inline-flex; align-items: center; gap: 9px; width: max-content; color: #111b17; font-size: 17px; font-weight: 700; letter-spacing: -.03em; text-transform: none; text-decoration: none; }
 .brandMark { width: 35px; height: 35px; object-fit: contain; }
+.reportDomain { justify-self: end; color: #214b39; font-size: 11px; font-weight: 700; letter-spacing: .02em; text-transform: lowercase; text-decoration: none; }
+.brand:hover span, .reportDomain:hover { text-decoration: underline; text-underline-offset: 3px; }
 .pageFooter { position: absolute; left: 66px; right: 66px; bottom: 30px; padding-top: 14px; border-top: 1px solid #e4e2da; display: flex; justify-content: space-between; color: #69766f; font-size: 11px; letter-spacing: .04em; text-transform: uppercase; }
 .coverPage { padding: 0; }
 .coverTop { margin: 35px 43px 0; height: 51px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #111; }
@@ -26,17 +29,21 @@
 .coverMeta dt span { position: absolute; left: 0; top: -6px; display: grid; place-items: center; width: 49px; height: 49px; border-radius: 50%; background: #efeee8; color: #214b39; font-size: 23px; }
 .coverMeta dd { margin: 7px 0 0; color: #3e4542; font-size: 14px; }
 .coverNote { margin: 46px 0 0; max-width: 310px; color: #36423c; font-size: 16px; line-height: 1.65; }
-.coverArtwork { position: relative; min-height: 510px; margin-top: 160px; }
-.artGlow { position: absolute; inset: 0 -45px 0 -25px; border-radius: 50%; background: radial-gradient(circle at 45% 45%, #fff 0, #f5f2ed 52%, rgba(245,242,237,0) 72%); }
-.browserCard { position: absolute; left: 13px; top: 90px; width: 230px; height: 180px; border: 2px solid #b9b3a4; border-radius: 11px; background: rgba(255,255,255,.22); }
-.browserDots { height: 40px; border-bottom: 2px solid #b9b3a4; display: flex; align-items: center; gap: 9px; padding-left: 18px; }
-.browserDots i { width: 10px; height: 10px; border-radius: 50%; background: #b9b3a4; }
-.browserLines { padding: 25px; display: grid; grid-template-columns: 64px 1fr; gap: 12px 16px; }
-.browserLines b { grid-row: span 3; height: 63px; border-radius: 6px; background: #e7e3dc; }
-.browserLines span { height: 9px; align-self: center; border-radius: 9px; background: #e1ddd5; }
+.coverArtwork { position: relative; min-height: 510px; margin-top: 125px; }
+.artGlow { position: absolute; inset: 0 -44px 12px -27px; border-radius: 50%; background: radial-gradient(circle at 48% 43%, #fff 0, #f3f1eb 54%, rgba(243,241,235,0) 73%); }
+.browserCard { position: absolute; left: -2px; top: 80px; width: 292px; height: 244px; overflow: hidden; border: 1px solid #d6d5cd; border-radius: 19px; background: rgba(255,255,255,.97); box-shadow: 0 25px 55px rgba(28,62,46,.14); }
+.browserDots { height: 48px; border-bottom: 1px solid #e2e1da; display: flex; align-items: center; gap: 7px; padding-left: 18px; }
+.browserDots::after { content: 'Accessibility scan'; margin-left: auto; margin-right: 17px; color: #66736c; font-size: 9px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
+.browserDots i { width: 7px; height: 7px; border-radius: 50%; background: #c4c0b5; }
+.browserLines { position: relative; margin: 16px; padding: 57px 20px 18px 64px; border: 1px solid #ece9e2; border-radius: 12px; background: #faf9f6; display: grid; grid-template-columns: 1fr; gap: 11px; }
+.browserLines::before { content: ''; position: absolute; left: 15px; top: 15px; right: 15px; height: 29px; border: 1px solid #dfddd5; border-radius: 8px; background: linear-gradient(90deg, #e3ebe6 0 13%, transparent 13%); }
+.browserLines::after { content: ''; position: absolute; left: 16px; bottom: 18px; width: 32px; height: 76px; border-radius: 8px; background: linear-gradient(#31684f 0 27%, #e6eee9 27% 50%, #e6eee9 50% 73%, #e6eee9 73%); }
+.browserLines b { display: none; }
+.browserLines span { height: 9px; align-self: center; border-radius: 9px; background: #dedbd3; }
 .browserLines span:nth-of-type(2) { width: 78%; }
 .browserLines span:nth-of-type(3) { width: 55%; }
-.largeShield { position: absolute; right: 8px; top: 205px; display: grid; place-items: center; width: 128px; height: 150px; color: #fff; background: linear-gradient(145deg, #476f5e, #17422f); font-size: 63px; font-weight: 300; clip-path: polygon(50% 0, 93% 14%, 88% 66%, 50% 100%, 12% 66%, 7% 14%); filter: drop-shadow(0 15px 12px rgba(17,42,30,.24)); }
+.largeShield { position: absolute; right: -3px; top: 272px; display: grid; place-items: center; width: 88px; height: 88px; border: 8px solid #fff; border-radius: 50%; color: #fff; background: linear-gradient(145deg, #347254, #173f2e); font-size: 38px; font-weight: 700; box-shadow: 0 19px 36px rgba(17,42,30,.26); }
+.largeShield::after { content: 'Snapshot ready'; position: absolute; right: 63px; width: 122px; padding: 12px 20px 12px 15px; border-radius: 12px 0 0 12px; background: #173f2e; color: #fff; font-size: 11px; font-weight: 700; letter-spacing: .03em; white-space: nowrap; z-index: -1; }
 .coverDisclaimer { position: absolute; left: 0; right: 0; bottom: 0; height: 129px; padding: 37px 53px; background: #f5f2ec; display: flex; align-items: center; gap: 25px; }
 .coverDisclaimer > span { display: grid; place-items: center; width: 40px; height: 40px; flex: 0 0 auto; border-radius: 50%; background: #194a31; color: white; font: 600 24px var(--font-serif); }
 .coverDisclaimer p { margin: 0; padding-left: 20px; border-left: 1px solid #aaa89f; color: #242b27; font-size: 14px; line-height: 1.65; }

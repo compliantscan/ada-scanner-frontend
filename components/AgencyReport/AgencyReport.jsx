@@ -126,10 +126,18 @@ function findingLocation(finding) {
 
 function Brand() {
   return (
-    <div className={styles.brand}>
+    <a className={styles.brand} href="https://www.compliantscan.com/" aria-label="Visit CompliantScan">
       <img className={styles.brandMark} src="/compliantscan-mark.png" alt="" />
       <span>CompliantScan</span>
-    </div>
+    </a>
+  );
+}
+
+function ReportDomain() {
+  return (
+    <a className={styles.reportDomain} href="https://www.compliantscan.com/">
+      compliantscan.com
+    </a>
   );
 }
 
@@ -139,7 +147,8 @@ function PageFrame({ number, title, children, className = '' }) {
       {number > 1 && (
         <header className={styles.pageHeader}>
           <Brand />
-          <span>{title}</span>
+          <span className={styles.pageTitle}>{title}</span>
+          <ReportDomain />
         </header>
       )}
       {children}
@@ -250,7 +259,7 @@ export default function AgencyReport({ scanData }) {
         <PageFrame number={1} className={styles.coverPage}>
           <div className={styles.coverTop}>
             <Brand />
-            <span>compliantscan.com</span>
+            <ReportDomain />
           </div>
           <div className={styles.coverRule} />
           <div className={styles.coverBody}>
