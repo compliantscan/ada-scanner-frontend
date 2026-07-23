@@ -396,9 +396,10 @@
   flex-shrink: 0;
 }
 
-.dashboard-topbar__logo-icon svg {
+.dashboard-topbar__logo-icon img {
   width: 26px;
   height: 26px;
+  object-fit: contain;
 }
 
 .dashboard-topbar__logo-text {

@@ -127,7 +127,7 @@ function findingLocation(finding) {
 function Brand() {
   return (
     <div className={styles.brand}>
-      <span className={styles.brandShield}>✓</span>
+      <img className={styles.brandMark} src="/compliantscan-mark.png" alt="" />
       <span>CompliantScan</span>
     </div>
   );

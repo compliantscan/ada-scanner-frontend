@@ -14,7 +14,7 @@ export default function Footer() {
         <div className="footer-main">
           <div className="footer-brand-block">
             <div className="footer-logo">
-              <div className="footer-logo-icon" aria-hidden="true" />
+              <img className="footer-logo-icon" src="/compliantscan-mark.png" alt="" />
               <p className="footer-brand">CompliantScan</p>
             </div>
             <div className="footer-contact">
