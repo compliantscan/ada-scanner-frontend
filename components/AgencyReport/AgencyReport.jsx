@@ -436,7 +436,7 @@ export default function AgencyReport({ scanData }) {
           </div>
           <div className={styles.pilotCta}>
             <div><span>Start with three websites</span><p>Reply to this email with <strong>“Pilot”</strong> and three website URLs. I’ll prepare the first scans and reports within 48 hours.</p></div>
-            <strong>Pilot →</strong>
+            <a href="mailto:info@compliantscan.com?subject=Pilot">Pilot →</a>
           </div>
           <div className={styles.pilotFooter}>
             <div>

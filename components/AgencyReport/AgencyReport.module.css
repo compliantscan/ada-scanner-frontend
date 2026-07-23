@@ -132,7 +132,7 @@
 .pilotCta { margin-top: 22px; padding: 22px 25px; border-radius: 14px; background: #b87b25; color: #fff; display: flex; align-items: center; justify-content: space-between; gap: 25px; }
 .pilotCta span { display: block; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
 .pilotCta p { margin: 7px 0 0; max-width: 560px; font-size: 14px; line-height: 1.5; }
-.pilotCta > strong { font: 500 24px var(--font-serif); white-space: nowrap; }
+.pilotCta > a { color: #fff; font: 500 24px var(--font-serif); white-space: nowrap; text-decoration: none; }
 .pilotFooter { margin-top: 20px; display: flex; align-items: flex-end; justify-content: space-between; }
 .pilotFooter div span, .pilotFooter div small { display: block; color: #7b8580; font-size: 9px; text-transform: uppercase; letter-spacing: .09em; }
 .pilotFooter div strong { display: block; margin: 5px 0; font: 500 21px var(--font-serif); }
