@@ -11,6 +11,7 @@ const FINDING_GUIDANCE = {
   'color-contrast': {
     title: 'Some text may be difficult to read',
     area: 'Color and visual clarity',
+    summary: 'Some text and interface elements do not meet the selected contrast threshold.',
     relatedCheck: 'Minimum color contrast',
     why: 'Low contrast can make text harder to read for people with low vision or in bright light.',
     check: 'Verify the text and background color pair meets the selected contrast target.',
@@ -19,6 +20,7 @@ const FINDING_GUIDANCE = {
   label: {
     title: 'Form fields need clearer labels',
     area: 'Forms and lead capture',
+    summary: 'Some form fields are missing clear, programmatically associated labels.',
     relatedCheck: 'Accessible form label',
     why: 'Visitors using screen readers may not know what information a field is asking them to enter.',
     check: 'Connect every visible label to its input and give icon-only fields an accessible name.',
@@ -27,6 +29,7 @@ const FINDING_GUIDANCE = {
   'button-name': {
     title: 'Some buttons need a meaningful name',
     area: 'Navigation and interaction',
+    summary: 'Some controls do not expose a clear programmatic name.',
     relatedCheck: 'Accessible button name',
     why: 'An unlabeled button can be announced only as “button,” leaving its purpose unclear.',
     check: 'Add visible text or an accessible name that describes the action.',
@@ -35,6 +38,7 @@ const FINDING_GUIDANCE = {
   'link-name': {
     title: 'Some links do not explain where they go',
     area: 'Navigation and calls to action',
+    summary: 'Some links are missing text that clearly explains their destination.',
     relatedCheck: 'Accessible link name',
     why: 'Unclear link names make destinations hard to understand with assistive technology.',
     check: 'Add descriptive text or an accessible name to icon-only links.',
@@ -43,6 +47,7 @@ const FINDING_GUIDANCE = {
   'image-alt': {
     title: 'Important images need text alternatives',
     area: 'Images and content',
+    summary: 'Some meaningful images are missing a useful text alternative.',
     relatedCheck: 'Image text alternative',
     why: 'Without alternative text, meaningful image content may be missed by screen-reader users.',
     check: 'Add concise alt text for informative images and empty alt text for decorative images.',
@@ -51,6 +56,7 @@ const FINDING_GUIDANCE = {
   'heading-order': {
     title: 'The page heading structure needs refinement',
     area: 'Content structure',
+    summary: 'Some heading levels do not follow a clear content hierarchy.',
     relatedCheck: 'Logical heading order',
     why: 'A logical heading order helps visitors understand and navigate the page.',
     check: 'Keep heading levels in a clear hierarchy without skipping levels.',
@@ -59,6 +65,7 @@ const FINDING_GUIDANCE = {
   region: {
     title: 'Some content sits outside clear page regions',
     area: 'Page structure',
+    summary: 'Some page content is not contained within a meaningful landmark.',
     relatedCheck: 'Content landmark regions',
     why: 'Landmarks help assistive-technology users move between major page areas.',
     check: 'Wrap major sections in meaningful header, nav, main, aside, or footer regions.',
@@ -67,6 +74,7 @@ const FINDING_GUIDANCE = {
   'landmark-one-main': {
     title: 'The page needs one clear main content region',
     area: 'Page structure',
+    summary: 'The page does not expose one clear main content region.',
     relatedCheck: 'Single main landmark',
     why: 'A single main landmark lets visitors skip repeated navigation and reach the primary content.',
     check: 'Use one main element around the page’s unique primary content.',
@@ -97,6 +105,7 @@ function friendlyFinding(violation) {
   const guide = FINDING_GUIDANCE[ruleId] || {
     title: violation.title || violation.description || 'An accessibility improvement was identified',
     area: 'Website experience',
+    summary: violation.description || violation.help || 'The automated scan identified a pattern that should be reviewed.',
     relatedCheck: violation.ruleId || violation.id || 'Automated accessibility check',
     why: violation.description || 'This issue may create unnecessary friction for some visitors using assistive technology.',
     check: violation.fix?.explanation || violation.help || 'Review the affected component and test the updated experience with keyboard and screen-reader navigation.',
@@ -312,28 +321,50 @@ export default function AgencyReport({ scanData }) {
           <div className={styles.findingList}>
             {topFindings.slice(0, 3).map((finding, index) => (
               <article className={styles.findingCard} key={`${finding.ruleId || finding.title}-${index}`}>
-                <div className={styles.findingNumber}>0{index + 1}</div>
-                <div className={styles.findingContent}>
-                  <div className={styles.findingHeading}>
-                    <div><span>{finding.area}</span><h3>{finding.title}</h3></div>
-                    <em className={styles[finding.severity] || styles.minor}>{finding.severity || 'review'}</em>
-                  </div>
-                  <div className={styles.findingDetails}>
-                    {finding.screenshotDataUrl ? (
-                      <figure className={styles.findingEvidence}>
-                        <img src={finding.screenshotDataUrl} alt={`Affected area for ${finding.title}`} />
-                        <figcaption>Example from scan</figcaption>
-                      </figure>
-                    ) : (
-                      <div className={styles.findingPlaceholder}><span>Detected on</span><strong>{report.domain}</strong></div>
-                    )}
-                    <dl>
-                      <div><dt>Found on</dt><dd>{findingLocation(finding)}</dd></div>
-                      <div><dt>Affected</dt><dd>{finding.affectedElements || 0} element{finding.affectedElements === 1 ? '' : 's'}</dd></div>
-                      <div><dt>Related check</dt><dd>{finding.relatedCheck}</dd></div>
-                      <div><dt>Why it matters</dt><dd>{finding.why}</dd></div>
-                      <div><dt>Developer check</dt><dd>{finding.check}</dd></div>
-                      <div><dt>Agency value</dt><dd>{finding.value}</dd></div>
+                <div className={styles.findingNumberRail}>
+                  <strong>0{index + 1}</strong>
+                  <i />
+                </div>
+                <div className={styles.findingCardMain}>
+                  <header className={styles.findingHeading}>
+                    <div>
+                      <span>{finding.area}</span>
+                      <h3>{finding.title}</h3>
+                      <p>{finding.summary}</p>
+                    </div>
+                    <em className={styles[finding.severity] || styles.minor}>
+                      <b aria-hidden="true">!</b>{finding.severity || 'review'}
+                    </em>
+                  </header>
+                  <div className={styles.findingBody}>
+                    <aside className={styles.findingEvidencePanel}>
+                      <span className={styles.evidenceLabel}>Example from scan</span>
+                      {finding.screenshotDataUrl ? (
+                        <figure className={styles.findingEvidence}>
+                          <img src={finding.screenshotDataUrl} alt={`Affected area for ${finding.title}`} />
+                        </figure>
+                      ) : (
+                        <div className={styles.findingPlaceholder}><span>Detected on</span><strong>{report.domain}</strong></div>
+                      )}
+                      <div className={styles.evidenceCallout}>
+                        <span aria-hidden="true">!</span>
+                        <p>{finding.why}</p>
+                      </div>
+                    </aside>
+                    <dl className={styles.findingFacts}>
+                      {[
+                        ['⌖', 'Found on', findingLocation(finding)],
+                        ['◎', 'Affected', `${finding.affectedElements || 0} element${finding.affectedElements === 1 ? '' : 's'}`],
+                        ['✓', 'Related check', finding.relatedCheck],
+                        ['?', 'Why it matters', finding.why],
+                        ['</>', 'Developer check', finding.check],
+                        ['▣', 'Agency value', finding.value],
+                      ].map(([icon, label, value]) => (
+                        <div key={label}>
+                          <span className={styles.factIcon} aria-hidden="true">{icon}</span>
+                          <div><dt>{label}</dt><dd>{value}</dd></div>
+                        </div>
+                      ))}
                     </dl>
                   </div>
                 </div>
