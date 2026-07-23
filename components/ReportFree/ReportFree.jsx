@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import styles from './ReportFree.module.css';
+import AuditActions from '../Dashboard/Audit/AuditActions';
 
 const SEVERITY_BADGE_CLASS = {
   Critical: 'badgeCritical',
@@ -185,36 +186,42 @@ export default function ReportFree({ scanData, embedded = false }) {
             <ScoreGaugeSmall score={score} label={scoreLabel} />
           </div>
 
-          <div className={styles.severityListCard}>
-            {SEVERITY_SUMMARY.map((item) => (
-              <div key={item.label} className={styles.severityListRow}>
-                <span className={styles.severityDot} style={{ backgroundColor: item.color }} />
-                <span className={styles.severityListValue}>{item.value}</span>
-                <span className={styles.severityListLabel}>{item.label}</span>
+          {embedded ? (
+            <AuditActions report={scanData} />
+          ) : (
+            <div className={styles.severityListCard}>
+              {SEVERITY_SUMMARY.map((item) => (
+                <div key={item.label} className={styles.severityListRow}>
+                  <span className={styles.severityDot} style={{ backgroundColor: item.color }} />
+                  <span className={styles.severityListValue}>{item.value}</span>
+                  <span className={styles.severityListLabel}>{item.label}</span>
+                </div>
+              ))}
+              <div className={styles.severityListTotal}>
+                <span>Total Issues</span>
+                <span>{totalIssues}</span>
               </div>
-            ))}
-            <div className={styles.severityListTotal}>
-              <span>Total Issues</span>
-              <span>{totalIssues}</span>
             </div>
-          </div>
+          )}
 
-          <div className={styles.unlockCard}>
-            <span className={styles.lockIcon}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <rect x="5.5" y="10.5" width="13" height="9.5" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
-                <path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3" stroke="currentColor" strokeWidth="1.5" />
-              </svg>
-            </span>
-            <p className={styles.unlockTitle}>View Your Full Report</p>
-            <p className={styles.unlockText}>
-              Open your five-page agency snapshot, review the priority findings,
-              and download the PDF without creating an account.
-            </p>
-            <Link href="/report" className={styles.unlockButton}>
-              Open Full Report
-            </Link>
-          </div>
+          {!embedded && (
+            <div className={styles.unlockCard}>
+              <span className={styles.lockIcon}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <rect x="5.5" y="10.5" width="13" height="9.5" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3" stroke="currentColor" strokeWidth="1.5" />
+                </svg>
+              </span>
+              <p className={styles.unlockTitle}>View Your Full Report</p>
+              <p className={styles.unlockText}>
+                Open your five-page agency snapshot, review the priority findings,
+                and download the PDF without creating an account.
+              </p>
+              <Link href="/report" className={styles.unlockButton}>
+                Open Full Report
+              </Link>
+            </div>
+          )}
         </aside>
 
         <main className={styles.main}>
