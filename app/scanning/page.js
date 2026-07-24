@@ -9,7 +9,7 @@ export const metadata = {
 export default function ScanningPage() {
   return (
     <Suspense fallback={null}>
-      <ScanningProgress />
+      <ScanningProgress mode="public" />
     </Suspense>
   );
 }

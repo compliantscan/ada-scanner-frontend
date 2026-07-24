@@ -4,15 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Icon from '../../../components/Dashboard/Icons/Icons';
 import { getCachedSession } from '../../../lib/supabaseClient';
+import { getApiUrl } from '../../../lib/apiUrl';
 import './scan.css';
-
-function getApiUrl() {
-  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
-  if (typeof window === 'undefined') return 'http://localhost:3001';
-  return window.location.hostname === 'localhost'
-    ? 'http://localhost:3001'
-    : window.location.origin;
-}
 
 const SCAN_STAGES = [
   { pct: 5,   label: 'Queued…' },
@@ -45,6 +38,14 @@ export default function ScanPage() {
 
   async function handleStartScan() {
     if (!isValidUrl) return;
+    const params = new URLSearchParams({
+      url: url.trim(),
+      scanType,
+      reportType,
+    });
+    router.push(`/dashboard/scanning?${params.toString()}`);
+    return;
+
     setPhase('scanning');
     setProgress(5);
     setErrorMsg('');
