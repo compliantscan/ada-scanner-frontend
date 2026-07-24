@@ -45,6 +45,10 @@ function ScoreGaugeSmall({ score, label }) {
 
 export default function ReportFree({ scanData, embedded = false }) {
   const summary = scanData?.executiveSummary || scanData || {};
+  const scanId = scanData?.scanId || scanData?.id;
+  const fullReportHref = embedded && scanId
+    ? `/dashboard/report/${encodeURIComponent(scanId)}`
+    : '/report';
   const severityCounts = summary.severityCounts || { critical: 0, serious: 0, moderate: 0, minor: 0 };
   
   const SEVERITY_SUMMARY = [
@@ -149,7 +153,7 @@ export default function ReportFree({ scanData, embedded = false }) {
           </div>
 
           <div className={styles.headerActions}>
-            <Link href="/report" className={styles.downloadButton}>
+            <Link href={fullReportHref} className={styles.downloadButton}>
               Get Full Report
             </Link>
           </div>
@@ -217,7 +221,7 @@ export default function ReportFree({ scanData, embedded = false }) {
                 Open your five-page agency snapshot, review the priority findings,
                 and download the PDF without creating an account.
               </p>
-              <Link href="/report" className={styles.unlockButton}>
+              <Link href={fullReportHref} className={styles.unlockButton}>
                 Open Full Report
               </Link>
             </div>
@@ -277,7 +281,7 @@ export default function ReportFree({ scanData, embedded = false }) {
                     These issues impact the most pages and users on your website.
                   </p>
                 </div>
-                <Link href="/report" className={styles.viewAllLink}>
+                <Link href={fullReportHref} className={styles.viewAllLink}>
                   View all issues
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                     <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -329,7 +333,7 @@ export default function ReportFree({ scanData, embedded = false }) {
                 </p>
               </div>
             </div>
-            <Link href="/report" className={styles.ctaBannerButton}>
+            <Link href={fullReportHref} className={styles.ctaBannerButton}>
               Open Full Report
             </Link>
           </section>

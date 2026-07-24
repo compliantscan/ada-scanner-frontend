@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { getApiUrl } from '@/lib/apiUrl';
+import { getCachedSession } from '@/lib/supabaseClient';
 import styles from './AgencyReport.module.css';
 
 const SEVERITY_ORDER = { critical: 4, serious: 3, moderate: 2, minor: 1 };
@@ -162,7 +163,7 @@ function PageFrame({ number, title, children, className = '' }) {
   );
 }
 
-export default function AgencyReport({ scanData }) {
+export default function AgencyReport({ scanData, backHref = '/results', dashboardReport = false }) {
   const [downloading, setDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState('');
 
@@ -201,17 +202,30 @@ export default function AgencyReport({ scanData }) {
 
   async function downloadPdf() {
     const scanId = scanData?.scanId || scanData?.id;
-    if (!scanId || !scanData?.scanAccessKey) {
+    if (!scanId || (!dashboardReport && !scanData?.scanAccessKey)) {
       setDownloadError('This scan is missing its download key. Please run a new scan and try again.');
       return;
     }
     setDownloading(true);
     setDownloadError('');
     try {
-      const response = await fetch(`${getApiUrl()}/lead-report/pdf`, {
+      const session = dashboardReport ? await getCachedSession() : null;
+      if (dashboardReport && !session?.access_token) {
+        throw new Error('Please sign in again to download this report.');
+      }
+      const response = await fetch(
+        dashboardReport
+          ? `${getApiUrl()}/dashboard/report/${encodeURIComponent(scanId)}/pdf`
+          : `${getApiUrl()}/lead-report/pdf`,
+        {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scanId, scanAccessKey: scanData.scanAccessKey }),
+        headers: {
+          'Content-Type': 'application/json',
+          ...(dashboardReport ? { Authorization: `Bearer ${session.access_token}` } : {}),
+        },
+        body: dashboardReport
+          ? undefined
+          : JSON.stringify({ scanId, scanAccessKey: scanData.scanAccessKey }),
       });
       if (!response.ok) throw new Error('The PDF could not be prepared.');
       const blob = await response.blob();
@@ -246,7 +260,7 @@ export default function AgencyReport({ scanData }) {
     <main className={styles.workspace}>
       <div className={styles.toolbar}>
         <div>
-          <Link href="/results" className={styles.backLink}>← Back to scan results</Link>
+          <Link href={backHref} className={styles.backLink}>← Back to scan results</Link>
           <span className={styles.savedLabel}>Live report preview · 5 pages</span>
         </div>
         <button type="button" className={styles.downloadButton} onClick={downloadPdf} disabled={downloading}>
