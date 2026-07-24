@@ -56,7 +56,9 @@ export default function ScanWebsiteCard() {
         <h2 className="scan-website-card__title">Scan a website</h2>
       </div>
 
-      <form onSubmit={handleSubmit} noValidate>
+      <form action="/dashboard/scanning" method="get" onSubmit={handleSubmit} noValidate>
+        <input type="hidden" name="scanType" value={scanType} />
+        <input type="hidden" name="reportType" value={reportType} />
         <div className="scan-website-card__field">
           <label className="scan-website-card__label" htmlFor="website-url">Website URL</label>
           <div className="scan-website-card__input-wrap">
@@ -64,6 +66,7 @@ export default function ScanWebsiteCard() {
             <input
               id="website-url"
               type="url"
+              name="url"
               className="scan-website-card__input"
               placeholder="https://example.com"
               value={url}

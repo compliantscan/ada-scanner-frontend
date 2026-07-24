@@ -126,7 +126,13 @@ export default function ScannerInput() {
 
   return (
     <div className={styles.wrapper}>
-      <form className={styles.scanner} role="search" onSubmit={handleScan}>
+      <form
+        className={styles.scanner}
+        role="search"
+        action="/scanning"
+        method="get"
+        onSubmit={handleScan}
+      >
         <label htmlFor="website-url" className={styles.srOnly}>
           Website URL
         </label>
