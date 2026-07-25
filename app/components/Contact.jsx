@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { getApiUrl } from '../../lib/apiUrl';
 
 export default function Contact() {
   const [isVisible, setIsVisible] = useState(false);
@@ -64,9 +65,7 @@ export default function Contact() {
     setLoading(true);
     setErrors({});
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL ||
-        (typeof window !== 'undefined' && window.location.hostname === 'localhost'
-          ? 'http://localhost:3001' : window.location.origin);
+      const apiUrl = getApiUrl();
       const response = await fetch(`${apiUrl}/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

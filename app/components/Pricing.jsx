@@ -1,12 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-
-function getApiUrl() {
-  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
-  if (typeof window === 'undefined') return 'http://localhost:3001';
-  return window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin;
-}
+import { getApiUrl } from '../../lib/apiUrl';
 
 function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);

@@ -2,12 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-
-function getApiUrl() {
-  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
-  if (typeof window === 'undefined') return 'http://localhost:3001';
-  return window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin;
-}
+import { getApiUrl } from '../../lib/apiUrl';
 
 export default function BillingPage() {
   const router = useRouter();

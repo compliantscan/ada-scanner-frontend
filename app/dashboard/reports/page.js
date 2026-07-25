@@ -4,20 +4,13 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { getCachedSession } from '../../../lib/supabaseClient';
 import Icon, { ScoreRing } from '../../../components/Dashboard/Icons/Icons';
+import { getApiUrl } from '../../../lib/apiUrl';
 import './reports.css';
 
 // Module-level cache: avoids re-fetching on every visit within the same session
 let _reportsCache = null;
 let _reportsCacheTime = 0;
 const REPORTS_TTL = 30_000; // 30 seconds
-
-function getApiUrl() {
-  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
-  if (typeof window === 'undefined') return 'http://localhost:3001';
-  return window.location.hostname === 'localhost'
-    ? 'http://localhost:3001'
-    : window.location.origin;
-}
 
 function calculateApproxScore(scan) {
   if (scan.score != null && Number.isFinite(scan.score)) return scan.score;
@@ -76,7 +69,7 @@ function buildReportRow(scan) {
     id: scan.id,
     domain: hostname,
     url: scan.url,
-    title: `${hostname} – Accessibility Report`,
+    title: hostname,
     meta: `${pages} pages · ${elements} elements`,
     scanType,
     reportType,
@@ -100,7 +93,7 @@ function ReportThumbnail({ thumbnail, title }) {
   );
 }
 
-function ReportRow({ report, onDownload, onShare, onDelete, onView }) {
+function ReportRow({ report, onDownload, onView }) {
   return (
     <tr>
       <td>
@@ -144,21 +137,6 @@ function ReportRow({ report, onDownload, onShare, onDelete, onView }) {
           </button>
           <button className="rt-action-btn" aria-label="Download" onClick={() => onDownload(report)}>
             <Icon name="download" />
-          </button>
-          <button className="rt-action-btn" aria-label="Share" onClick={() => onShare(report)}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="18" cy="5" r="3"></circle>
-              <circle cx="6" cy="12" r="3"></circle>
-              <circle cx="18" cy="19" r="3"></circle>
-              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-            </svg>
-          </button>
-          <button className="rt-action-btn" aria-label="Delete" onClick={() => onDelete(report)}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="3 6 5 6 21 6"></polyline>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-            </svg>
           </button>
         </div>
       </td>
@@ -236,43 +214,6 @@ export default function ReportsPage() {
     } catch (err) {
       console.error('PDF download error:', err.message);
       alert('Failed to download report.');
-    }
-  }
-
-  // Share Action
-  function handleShare(report) {
-    if (!report.id) return;
-    const url = `${window.location.origin}/dashboard/audit/${report.id}`;
-    navigator.clipboard.writeText(url)
-      .then(() => alert('Link copied to clipboard!'))
-      .catch(err => console.error('Failed to copy: ', err));
-  }
-
-  // Delete Action
-  async function handleDelete(report) {
-    if (!report.id) return;
-    if (!confirm('Are you sure you want to delete this report?')) return;
-    
-    try {
-      const session = await getCachedSession();
-      if (!session) return;
-      
-      const apiUrl = getApiUrl();
-      const response = await fetch(`${apiUrl}/dashboard/scan/${report.id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${session.access_token}` },
-      });
-      
-      if (!response.ok) throw new Error('Delete failed');
-      
-      setReports(prev => {
-        const updated = prev.filter(r => r.id !== report.id);
-        _reportsCache = updated;
-        return updated;
-      });
-    } catch (err) {
-      console.error('Delete error:', err.message);
-      alert('Failed to delete report.');
     }
   }
 
@@ -360,11 +301,13 @@ export default function ReportsPage() {
           </thead>
           <tbody>
             {isInitialLoading ? (
-              <tr>
-                <td colSpan="7" style={{ textAlign: 'center', padding: '40px', color: 'var(--cs-text-muted)' }}>
-                  Loading reports…
-                </td>
-              </tr>
+              Array.from({ length: 5 }).map((_, i) => (
+                <tr key={`skeleton-${i}`}>
+                  <td colSpan="7" style={{ padding: '16px 24px' }}>
+                    <div className="skeleton" style={{ width: '100%', height: 24, borderRadius: 4 }}></div>
+                  </td>
+                </tr>
+              ))
             ) : allRows.length === 0 ? (
               <tr>
                 <td colSpan="7" style={{ textAlign: 'center', padding: '40px', color: 'var(--cs-text-muted)' }}>
@@ -377,26 +320,12 @@ export default function ReportsPage() {
                   key={report.id} 
                   report={report} 
                   onDownload={handleDownload} 
-                  onShare={handleShare}
-                  onDelete={handleDelete}
                   onView={handleView}
                 />
               ))
             )}
           </tbody>
         </table>
-
-        {!isInitialLoading && allRows.length > 0 && (
-          <div className="reports-pagination">
-            <button className="reports-page-btn">‹</button>
-            <button className="reports-page-btn reports-page-btn--active">1</button>
-            <button className="reports-page-btn">2</button>
-            <button className="reports-page-btn">3</button>
-            <span style={{ color: 'var(--cs-text-muted)', padding: '0 4px' }}>...</span>
-            <button className="reports-page-btn">8</button>
-            <button className="reports-page-btn">›</button>
-          </div>
-        )}
       </div>
     </div>
   );

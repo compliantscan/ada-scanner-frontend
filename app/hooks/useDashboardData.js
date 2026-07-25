@@ -2,14 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { getSupabaseClient, getCachedSession } from '../../lib/supabaseClient';
-
-function getApiUrl() {
-  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
-  if (typeof window === 'undefined') return 'http://localhost:3001';
-  return window.location.hostname === 'localhost'
-    ? 'http://localhost:3001'
-    : window.location.origin;
-}
+import { getApiUrl } from '../../lib/apiUrl';
 
 /**
  * Fetches aggregated dashboard stats from the backend.

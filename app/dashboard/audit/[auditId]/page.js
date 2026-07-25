@@ -5,12 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { getSupabaseClient } from '../../../../lib/supabaseClient';
 import ScanProgress from '../../../../components/Dashboard/Audit/ScanProgress';
 import ReportFree from '../../../../components/ReportFree/ReportFree';
-
-function getApiUrl() {
-  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
-  if (typeof window === 'undefined') return 'http://localhost:3001';
-  return window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin;
-}
+import { getApiUrl } from '../../../../lib/apiUrl';
 
 function FailedState({ error, onRetry }) {
   return (

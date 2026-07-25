@@ -5,5 +5,7 @@ node_modules/
 .env.*.local
 .DS_Store
 npm-debug.log
+*.log
+*.pid
 .idea/
 .vscode/

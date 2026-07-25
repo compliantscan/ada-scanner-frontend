@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
 @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600&display=swap');
 
 :root {
@@ -3339,4 +3339,17 @@ button.nav-hamburger {
   button.nav-hamburger {
     display: none !important;
   }
+}
+
+
+.skeleton {
+  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 6px;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }

@@ -1,30 +1,83 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Icon, { ScoreRing } from '../../../components/Dashboard/Icons/Icons';
 import { getCachedSession } from '../../../lib/supabaseClient';
+import { getApiUrl } from '../../../lib/apiUrl';
 import './monitoring.css';
-
-function getApiUrl() {
-  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
-  if (typeof window === 'undefined') return 'http://localhost:3001';
-  return window.location.hostname === 'localhost'
-    ? 'http://localhost:3001'
-    : window.location.origin;
-}
 
 // Module-level cache
 let _monitoringCache = null;
 let _monitoringCacheTime = 0;
 const MONITORING_TTL = 30_000;
 
+function formatRelativeTime(dateStr) {
+  if (!dateStr) return null;
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  if (mins < 1) return 'Just now';
+  if (mins < 60) return `${mins}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  return `${days}d ago`;
+}
+
+function formatNextScan(dateStr) {
+  if (!dateStr) return null;
+  const diff = new Date(dateStr).getTime() - Date.now();
+  if (diff < 0) return 'Due now';
+  const mins = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  if (mins < 60) return `in ${mins}m`;
+  if (hours < 24) return `in ${hours}h`;
+  return `in ${days}d`;
+}
+
+function getScoreColor(score) {
+  if (score === null || score === undefined) return 'var(--cs-text-muted)';
+  if (score >= 80) return 'var(--cs-green)';
+  if (score >= 50) return 'var(--cs-orange)';
+  return 'var(--cs-red)';
+}
+
+function MiniSparkline({ scans }) {
+  if (!scans || scans.length < 2) return null;
+  const reversed = [...scans].reverse();
+  const scores = reversed.map(s => s.score || 0);
+  const min = Math.min(...scores);
+  const max = Math.max(...scores);
+  const range = max - min || 1;
+  const W = 80, H = 32;
+  const pts = scores.map((s, i) => {
+    const x = (i / (scores.length - 1)) * W;
+    const y = H - ((s - min) / range) * (H - 4) - 2;
+    return `${x},${y}`;
+  }).join(' ');
+  const lastTwo = scores.slice(-2);
+  const trending = lastTwo[1] > lastTwo[0] ? 'up' : lastTwo[1] < lastTwo[0] ? 'down' : 'neutral';
+  return (
+    <div className="monitoring-card__sparkline-wrap">
+      <svg width={W} height={H} className="monitoring-card__sparkline">
+        <polyline points={pts} fill="none" stroke={trending === 'up' ? 'var(--cs-green)' : trending === 'down' ? 'var(--cs-red)' : 'var(--cs-accent)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      <span className={`monitoring-card__trend-icon monitoring-card__trend-icon--${trending}`}>
+        {trending === 'up' ? '↑' : trending === 'down' ? '↓' : '→'}
+      </span>
+    </div>
+  );
+}
+
 export default function MonitoringPage() {
   const router = useRouter();
   const [sites, setSites] = useState(() => _monitoringCache?.sites || []);
   const [summary, setSummary] = useState(() => _monitoringCache?.summary || { healthy: 0, warning: 0, critical: 0, total: 0 });
   const [loading, setLoading] = useState(!_monitoringCache);
+  const [scanningId, setScanningId] = useState(null);
+  const [scansMap, setScansMap] = useState({});
 
   // Filters
   const [search, setSearch] = useState('');
@@ -60,16 +113,55 @@ export default function MonitoringPage() {
       if (!res.ok) throw new Error('Failed to load monitoring data');
 
       const data = await res.json();
-      const sites = data.sites || [];
-      const summary = data.summary || { healthy: 0, warning: 0, critical: 0, total: 0 };
-      _monitoringCache = { sites, summary };
+      const sitesData = data.sites || [];
+      const summaryData = data.summary || { healthy: 0, warning: 0, critical: 0, total: 0 };
+      _monitoringCache = { sites: sitesData, summary: summaryData };
       _monitoringCacheTime = Date.now();
-      setSites(sites);
-      setSummary(summary);
+      setSites(sitesData);
+      setSummary(summaryData);
+
+      // Fetch recent scans for sparklines
+      fetchRecentScans(sitesData, session.access_token);
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function fetchRecentScans(sitesData, token) {
+    const map = {};
+    await Promise.all(
+      sitesData.map(async (site) => {
+        try {
+          const res = await fetch(`${getApiUrl()}/dashboard/monitoring/${site.id}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (res.ok) {
+            const d = await res.json();
+            map[site.id] = d.scans || [];
+          }
+        } catch {}
+      })
+    );
+    setScansMap(map);
+  }
+
+  async function handleScanNow(e, siteId) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (scanningId) return;
+    setScanningId(siteId);
+    try {
+      const session = await getCachedSession();
+      await fetch(`${getApiUrl()}/dashboard/monitoring/${siteId}/scan`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.access_token}` }
+      });
+      setTimeout(() => { fetchSites(true); setScanningId(null); }, 5000);
+    } catch (err) {
+      console.error(err);
+      setScanningId(null);
     }
   }
 
@@ -103,7 +195,7 @@ export default function MonitoringPage() {
       setNewUrl('');
       setNewFrequency('weekly');
       setNewAlertsEnabled(true);
-      fetchSites();
+      fetchSites(true);
     } catch (err) {
       setModalError(err.message);
     } finally {
@@ -139,6 +231,7 @@ export default function MonitoringPage() {
             <span className="monitoring-stat-card__title">Total Monitored</span>
           </div>
           <div className="monitoring-stat-card__value">{summary.total}</div>
+          <div className="monitoring-stat-card__sub">Active websites</div>
         </div>
         
         <div className="monitoring-stat-card">
@@ -148,7 +241,8 @@ export default function MonitoringPage() {
             </div>
             <span className="monitoring-stat-card__title">Healthy</span>
           </div>
-          <div className="monitoring-stat-card__value">{summary.healthy}</div>
+          <div className="monitoring-stat-card__value monitoring-stat-card__value--green">{summary.healthy}</div>
+          <div className="monitoring-stat-card__sub">Score ≥ 80</div>
         </div>
 
         <div className="monitoring-stat-card">
@@ -158,7 +252,8 @@ export default function MonitoringPage() {
             </div>
             <span className="monitoring-stat-card__title">Warnings</span>
           </div>
-          <div className="monitoring-stat-card__value">{summary.warning}</div>
+          <div className="monitoring-stat-card__value monitoring-stat-card__value--orange">{summary.warning}</div>
+          <div className="monitoring-stat-card__sub">Needs attention</div>
         </div>
 
         <div className="monitoring-stat-card">
@@ -168,7 +263,8 @@ export default function MonitoringPage() {
             </div>
             <span className="monitoring-stat-card__title">Critical</span>
           </div>
-          <div className="monitoring-stat-card__value">{summary.critical}</div>
+          <div className="monitoring-stat-card__value monitoring-stat-card__value--red">{summary.critical}</div>
+          <div className="monitoring-stat-card__sub">Action required</div>
         </div>
       </div>
 
@@ -200,7 +296,30 @@ export default function MonitoringPage() {
       </div>
 
       {loading ? (
-        <div>Loading...</div>
+        <div className="monitoring-grid">
+          {[1, 2, 3].map(i => (
+            <div className="monitoring-card" key={i}>
+              <div className="monitoring-card__header">
+                <div className="skeleton" style={{ width: 48, height: 48, borderRadius: 14 }}></div>
+                <div className="skeleton" style={{ width: 60, height: 24, borderRadius: 999 }}></div>
+              </div>
+              <div className="skeleton" style={{ width: '70%', height: 20, marginBottom: 8 }}></div>
+              <div className="skeleton" style={{ width: '40%', height: 16, marginBottom: 20 }}></div>
+              
+              <div className="monitoring-card__score-section" style={{ border: 'none', background: 'transparent', padding: 0 }}>
+                <div style={{ flex: 1 }}>
+                  <div className="skeleton" style={{ width: 60, height: 32, marginBottom: 8 }}></div>
+                  <div className="skeleton" style={{ width: 100, height: 16 }}></div>
+                </div>
+                <div className="skeleton" style={{ width: 56, height: 56, borderRadius: '50%' }}></div>
+              </div>
+              
+              <div className="monitoring-card__footer" style={{ marginTop: 24 }}>
+                <div className="skeleton" style={{ width: '100%', height: 36, borderRadius: 8 }}></div>
+              </div>
+            </div>
+          ))}
+        </div>
       ) : sites.length === 0 ? (
         <div className="monitoring-empty">
           <div className="monitoring-empty__icon">
@@ -216,52 +335,124 @@ export default function MonitoringPage() {
         </div>
       ) : (
         <div className="monitoring-grid">
-          {filteredSites.map(site => (
-            <div className="monitoring-card" key={site.id}>
-              <div className="monitoring-card__header">
-                <div className="monitoring-card__icon">
-                  <Icon name="globe" />
-                </div>
-                <div className={`monitoring-badge monitoring-badge--${site.status}`}>
-                  {site.status}
-                </div>
-              </div>
+          {filteredSites.map(site => {
+            const siteScans = scansMap[site.id] || [];
+            const latestScan = siteScans[0] || null;
+            const score = site.score ?? (latestScan?.score ?? null);
+            const scoreColor = getScoreColor(score);
+            const lastScanLabel = formatRelativeTime(site.last_scan_at);
+            const nextScanLabel = formatNextScan(site.next_scan_at);
+            const isScanning = scanningId === site.id;
 
-              <div className="monitoring-card__url" title={site.url}>
-                {site.url.replace(/^https?:\/\//, '')}
-              </div>
-              
-              <div className="monitoring-card__meta">
-                <div className="monitoring-card__meta-item">
-                  <Icon name="clock" />
-                  {site.frequency}
+            return (
+              <div className="monitoring-card" key={site.id}>
+                {/* Card Header */}
+                <div className="monitoring-card__header">
+                  <div className="monitoring-card__icon">
+                    <Icon name="globe" />
+                  </div>
+                  <div className={`monitoring-badge monitoring-badge--${site.status}`}>
+                    {site.status}
+                  </div>
                 </div>
-                <div className="monitoring-card__meta-item">
-                  <Icon name="bell" />
-                  {site.alerts_enabled ? 'Alerts On' : 'Alerts Off'}
-                </div>
-              </div>
 
-              <div className="monitoring-card__score-section">
-                <div>
-                  <div className="monitoring-card__score-val">{site.score !== null ? site.score : '--'}</div>
-                  <div className="monitoring-card__score-label">Current Score</div>
+                {/* URL */}
+                <div className="monitoring-card__url" title={site.url}>
+                  {site.url.replace(/^https?:\/\//, '')}
                 </div>
-                {site.score !== null && (
-                  <ScoreRing score={site.score} size={48} />
+                
+                {/* Meta: frequency & alerts */}
+                <div className="monitoring-card__meta">
+                  <div className="monitoring-card__meta-item">
+                    <Icon name="clock" />
+                    {site.frequency}
+                  </div>
+                  <div className="monitoring-card__meta-item">
+                    <Icon name="bell" />
+                    {site.alerts_enabled ? 'Alerts On' : 'Alerts Off'}
+                  </div>
+                </div>
+
+                {/* Score Section */}
+                <div className="monitoring-card__score-section">
+                  <div className="monitoring-card__score-left">
+                    <div className="monitoring-card__score-val" style={{ color: scoreColor }}>
+                      {score !== null ? score : '--'}
+                    </div>
+                    <div className="monitoring-card__score-label">Accessibility Score</div>
+                    {lastScanLabel && (
+                      <div className="monitoring-card__score-time">Last scan: {lastScanLabel}</div>
+                    )}
+                  </div>
+                  <div className="monitoring-card__score-right">
+                    {score !== null ? (
+                      <ScoreRing score={score} size={56} />
+                    ) : (
+                      <div className="monitoring-card__score-ring-placeholder">
+                        <span>N/A</span>
+                      </div>
+                    )}
+                    <MiniSparkline scans={siteScans} />
+                  </div>
+                </div>
+
+                {/* Violations Summary */}
+                {latestScan && (
+                  <div className="monitoring-card__violations">
+                    {latestScan.critical_count > 0 && (
+                      <span className="monitoring-card__violation-chip monitoring-card__violation-chip--critical">
+                        {latestScan.critical_count} critical
+                      </span>
+                    )}
+                    {latestScan.serious_count > 0 && (
+                      <span className="monitoring-card__violation-chip monitoring-card__violation-chip--serious">
+                        {latestScan.serious_count} serious
+                      </span>
+                    )}
+                    {latestScan.moderate_count > 0 && (
+                      <span className="monitoring-card__violation-chip monitoring-card__violation-chip--moderate">
+                        {latestScan.moderate_count} moderate
+                      </span>
+                    )}
+                    {latestScan.critical_count === 0 && latestScan.serious_count === 0 && latestScan.moderate_count === 0 && (
+                      <span className="monitoring-card__violation-chip monitoring-card__violation-chip--ok">
+                        ✓ No major issues
+                      </span>
+                    )}
+                  </div>
                 )}
-              </div>
 
-              <div className="monitoring-card__footer">
-                <Link href={`/dashboard/monitoring/${site.id}`} className="monitoring-card__btn monitoring-card__btn--primary">
-                  View Detail
-                </Link>
-                <button className="monitoring-card__btn-icon" title="Scan Now" onClick={() => router.push(`/dashboard/monitoring/${site.id}`)}>
-                  <Icon name="refresh-cw" />
-                </button>
+                {/* Next Scan */}
+                {nextScanLabel && site.status !== 'paused' && (
+                  <div className="monitoring-card__next-scan">
+                    <Icon name="clock" />
+                    Next scan {nextScanLabel}
+                  </div>
+                )}
+                {site.status === 'paused' && (
+                  <div className="monitoring-card__next-scan monitoring-card__next-scan--paused">
+                    <Icon name="pause" />
+                    Monitoring paused
+                  </div>
+                )}
+
+                {/* Footer Actions */}
+                <div className="monitoring-card__footer">
+                  <Link href={`/dashboard/monitoring/${site.id}`} className="monitoring-card__btn monitoring-card__btn--primary">
+                    View Detail
+                  </Link>
+                  <button 
+                    className={`monitoring-card__btn-icon ${isScanning ? 'monitoring-card__btn-icon--spinning' : ''}`} 
+                    title={isScanning ? 'Scanning...' : 'Scan Now'} 
+                    onClick={(e) => handleScanNow(e, site.id)}
+                    disabled={isScanning || site.status === 'paused'}
+                  >
+                    <Icon name="refresh-cw" />
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
@@ -326,7 +517,7 @@ export default function MonitoringPage() {
                   Cancel
                 </button>
                 <button type="submit" className="monitoring-modal__btn monitoring-modal__btn--submit" disabled={modalLoading}>
-                  {modalLoading ? 'Adding...' : 'Add Website'}
+                  {modalLoading ? 'Scanning & Adding...' : 'Add Website'}
                 </button>
               </div>
             </form>

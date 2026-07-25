@@ -52,14 +52,25 @@ export default function DashboardReportPage() {
 
   if (loading) {
     return (
-      <main className="auth-shell">
-        <div className="auth-card">
-          <div className="auth-header">
-            <p className="auth-eyebrow">CompliantScan</p>
-            <h1>Loading report…</h1>
+      <div className="dashboard-content" style={{ padding: 32 }}>
+        <div className="skeleton" style={{ width: 120, height: 16, marginBottom: 32 }}></div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 40 }}>
+          <div>
+            <div className="skeleton" style={{ width: 300, height: 36, marginBottom: 12 }}></div>
+            <div className="skeleton" style={{ width: 200, height: 20 }}></div>
           </div>
+          <div className="skeleton" style={{ width: 150, height: 40, borderRadius: 8 }}></div>
         </div>
-      </main>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24, marginBottom: 40 }}>
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} style={{ padding: 24, borderRadius: 16, border: '1px solid var(--color-border)' }}>
+              <div className="skeleton" style={{ width: 60, height: 16, marginBottom: 12 }}></div>
+              <div className="skeleton" style={{ width: 40, height: 32 }}></div>
+            </div>
+          ))}
+        </div>
+        <div className="skeleton" style={{ width: '100%', height: 400, borderRadius: 16 }}></div>
+      </div>
     );
   }
 
