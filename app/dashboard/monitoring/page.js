@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Icon, { ScoreRing } from '../../../components/Dashboard/Icons/Icons';
@@ -71,11 +71,64 @@ function MiniSparkline({ scans }) {
   );
 }
 
+function SummarySkeletonCard() {
+  return (
+    <div className="monitoring-stat-card">
+      <div className="monitoring-stat-card__header">
+        <div className="skeleton" style={{ width: 40, height: 40, borderRadius: 12 }} />
+        <div className="skeleton" style={{ width: 100, height: 14, borderRadius: 4 }} />
+      </div>
+      <div className="skeleton" style={{ width: 60, height: 36, borderRadius: 8, margin: '4px 0' }} />
+      <div className="skeleton" style={{ width: 80, height: 12, borderRadius: 4 }} />
+    </div>
+  );
+}
+
+function MonitoringSkeletonCard() {
+  return (
+    <div className="monitoring-card monitoring-card--skeleton">
+      <div className="monitoring-card__header">
+        <div className="skeleton" style={{ width: 48, height: 48, borderRadius: 14 }} />
+        <div className="skeleton" style={{ width: 68, height: 22, borderRadius: 999 }} />
+      </div>
+      
+      <div className="skeleton" style={{ width: '65%', height: 18, borderRadius: 6, margin: '6px 0 2px' }} />
+      
+      <div style={{ display: 'flex', gap: 14, marginBottom: 4 }}>
+        <div className="skeleton" style={{ width: 64, height: 14, borderRadius: 4 }} />
+        <div className="skeleton" style={{ width: 72, height: 14, borderRadius: 4 }} />
+      </div>
+
+      <div className="monitoring-card__score-section" style={{ background: '#f8fafd', borderColor: '#ededed' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
+          <div className="skeleton" style={{ width: 52, height: 32, borderRadius: 6 }} />
+          <div className="skeleton" style={{ width: 110, height: 12, borderRadius: 4 }} />
+          <div className="skeleton" style={{ width: 80, height: 12, borderRadius: 4 }} />
+        </div>
+        <div className="skeleton" style={{ width: 56, height: 56, borderRadius: '50%', flexShrink: 0 }} />
+      </div>
+
+      <div style={{ display: 'flex', gap: 6, marginTop: 4 }}>
+        <div className="skeleton" style={{ width: 64, height: 20, borderRadius: 6 }} />
+        <div className="skeleton" style={{ width: 64, height: 20, borderRadius: 6 }} />
+      </div>
+
+      <div className="skeleton" style={{ width: 100, height: 14, borderRadius: 4, marginTop: 2 }} />
+
+      <div className="monitoring-card__footer" style={{ marginTop: 'auto', paddingTop: 8 }}>
+        <div className="skeleton" style={{ flex: 1, height: 36, borderRadius: 8 }} />
+        <div className="skeleton" style={{ width: 36, height: 36, borderRadius: 8 }} />
+      </div>
+    </div>
+  );
+}
+
 export default function MonitoringPage() {
   const router = useRouter();
   const [sites, setSites] = useState(() => _monitoringCache?.sites || []);
   const [summary, setSummary] = useState(() => _monitoringCache?.summary || { healthy: 0, warning: 0, critical: 0, total: 0 });
   const [loading, setLoading] = useState(!_monitoringCache);
+  const [scansLoading, setScansLoading] = useState(true);
   const [scanningId, setScanningId] = useState(null);
   const [scansMap, setScansMap] = useState({});
 
@@ -96,11 +149,16 @@ export default function MonitoringPage() {
   }, []);
 
   async function fetchSites(force = false) {
+    if (force) {
+      setLoading(true);
+    }
     const now = Date.now();
     if (!force && _monitoringCache && now - _monitoringCacheTime < MONITORING_TTL) {
       setSites(_monitoringCache.sites);
       setSummary(_monitoringCache.summary);
       setLoading(false);
+      const session = await getCachedSession();
+      if (session) fetchRecentScans(_monitoringCache.sites, session.access_token);
       return;
     }
     try {
@@ -120,7 +178,7 @@ export default function MonitoringPage() {
       setSites(sitesData);
       setSummary(summaryData);
 
-      // Fetch recent scans for sparklines
+      // Fetch recent scans for sparklines & scores
       fetchRecentScans(sitesData, session.access_token);
     } catch (err) {
       console.error(err);
@@ -130,6 +188,8 @@ export default function MonitoringPage() {
   }
 
   async function fetchRecentScans(sitesData, token) {
+    if (!token) return;
+    setScansLoading(true);
     const map = {};
     await Promise.all(
       sitesData.map(async (site) => {
@@ -145,6 +205,7 @@ export default function MonitoringPage() {
       })
     );
     setScansMap(map);
+    setScansLoading(false);
   }
 
   async function handleScanNow(e, siteId) {
@@ -223,49 +284,60 @@ export default function MonitoringPage() {
       </div>
 
       <div className="monitoring-summary">
-        <div className="monitoring-stat-card">
-          <div className="monitoring-stat-card__header">
-            <div className="monitoring-stat-card__icon monitoring-stat-card__icon--blue">
-              <Icon name="globe" />
+        {loading ? (
+          <>
+            <SummarySkeletonCard />
+            <SummarySkeletonCard />
+            <SummarySkeletonCard />
+            <SummarySkeletonCard />
+          </>
+        ) : (
+          <>
+            <div className="monitoring-stat-card">
+              <div className="monitoring-stat-card__header">
+                <div className="monitoring-stat-card__icon monitoring-stat-card__icon--blue">
+                  <Icon name="globe" />
+                </div>
+                <span className="monitoring-stat-card__title">Total Monitored</span>
+              </div>
+              <div className="monitoring-stat-card__value">{summary.total}</div>
+              <div className="monitoring-stat-card__sub">Active websites</div>
             </div>
-            <span className="monitoring-stat-card__title">Total Monitored</span>
-          </div>
-          <div className="monitoring-stat-card__value">{summary.total}</div>
-          <div className="monitoring-stat-card__sub">Active websites</div>
-        </div>
-        
-        <div className="monitoring-stat-card">
-          <div className="monitoring-stat-card__header">
-            <div className="monitoring-stat-card__icon monitoring-stat-card__icon--green">
-              <Icon name="check" />
+            
+            <div className="monitoring-stat-card">
+              <div className="monitoring-stat-card__header">
+                <div className="monitoring-stat-card__icon monitoring-stat-card__icon--green">
+                  <Icon name="check" />
+                </div>
+                <span className="monitoring-stat-card__title">Healthy</span>
+              </div>
+              <div className="monitoring-stat-card__value monitoring-stat-card__value--green">{summary.healthy}</div>
+              <div className="monitoring-stat-card__sub">Score ≥ 80</div>
             </div>
-            <span className="monitoring-stat-card__title">Healthy</span>
-          </div>
-          <div className="monitoring-stat-card__value monitoring-stat-card__value--green">{summary.healthy}</div>
-          <div className="monitoring-stat-card__sub">Score ≥ 80</div>
-        </div>
 
-        <div className="monitoring-stat-card">
-          <div className="monitoring-stat-card__header">
-            <div className="monitoring-stat-card__icon monitoring-stat-card__icon--orange">
-              <Icon name="alert" />
+            <div className="monitoring-stat-card">
+              <div className="monitoring-stat-card__header">
+                <div className="monitoring-stat-card__icon monitoring-stat-card__icon--orange">
+                  <Icon name="alert" />
+                </div>
+                <span className="monitoring-stat-card__title">Warnings</span>
+              </div>
+              <div className="monitoring-stat-card__value monitoring-stat-card__value--orange">{summary.warning}</div>
+              <div className="monitoring-stat-card__sub">Needs attention</div>
             </div>
-            <span className="monitoring-stat-card__title">Warnings</span>
-          </div>
-          <div className="monitoring-stat-card__value monitoring-stat-card__value--orange">{summary.warning}</div>
-          <div className="monitoring-stat-card__sub">Needs attention</div>
-        </div>
 
-        <div className="monitoring-stat-card">
-          <div className="monitoring-stat-card__header">
-            <div className="monitoring-stat-card__icon monitoring-stat-card__icon--red">
-              <Icon name="x" />
+            <div className="monitoring-stat-card">
+              <div className="monitoring-stat-card__header">
+                <div className="monitoring-stat-card__icon monitoring-stat-card__icon--red">
+                  <Icon name="x" />
+                </div>
+                <span className="monitoring-stat-card__title">Critical</span>
+              </div>
+              <div className="monitoring-stat-card__value monitoring-stat-card__value--red">{summary.critical}</div>
+              <div className="monitoring-stat-card__sub">Action required</div>
             </div>
-            <span className="monitoring-stat-card__title">Critical</span>
-          </div>
-          <div className="monitoring-stat-card__value monitoring-stat-card__value--red">{summary.critical}</div>
-          <div className="monitoring-stat-card__sub">Action required</div>
-        </div>
+          </>
+        )}
       </div>
 
       <div className="monitoring-filters">
@@ -297,27 +369,8 @@ export default function MonitoringPage() {
 
       {loading ? (
         <div className="monitoring-grid">
-          {[1, 2, 3].map(i => (
-            <div className="monitoring-card" key={i}>
-              <div className="monitoring-card__header">
-                <div className="skeleton" style={{ width: 48, height: 48, borderRadius: 14 }}></div>
-                <div className="skeleton" style={{ width: 60, height: 24, borderRadius: 999 }}></div>
-              </div>
-              <div className="skeleton" style={{ width: '70%', height: 20, marginBottom: 8 }}></div>
-              <div className="skeleton" style={{ width: '40%', height: 16, marginBottom: 20 }}></div>
-              
-              <div className="monitoring-card__score-section" style={{ border: 'none', background: 'transparent', padding: 0 }}>
-                <div style={{ flex: 1 }}>
-                  <div className="skeleton" style={{ width: 60, height: 32, marginBottom: 8 }}></div>
-                  <div className="skeleton" style={{ width: 100, height: 16 }}></div>
-                </div>
-                <div className="skeleton" style={{ width: 56, height: 56, borderRadius: '50%' }}></div>
-              </div>
-              
-              <div className="monitoring-card__footer" style={{ marginTop: 24 }}>
-                <div className="skeleton" style={{ width: '100%', height: 36, borderRadius: 8 }}></div>
-              </div>
-            </div>
+          {[1, 2, 3, 4, 5, 6].map(i => (
+            <MonitoringSkeletonCard key={i} />
           ))}
         </div>
       ) : sites.length === 0 ? (
@@ -343,6 +396,7 @@ export default function MonitoringPage() {
             const lastScanLabel = formatRelativeTime(site.last_scan_at);
             const nextScanLabel = formatNextScan(site.next_scan_at);
             const isScanning = scanningId === site.id;
+            const isScoreLoading = scansLoading && score === null;
 
             return (
               <div className="monitoring-card" key={site.id}>
@@ -376,28 +430,47 @@ export default function MonitoringPage() {
                 {/* Score Section */}
                 <div className="monitoring-card__score-section">
                   <div className="monitoring-card__score-left">
-                    <div className="monitoring-card__score-val" style={{ color: scoreColor }}>
-                      {score !== null ? score : '--'}
-                    </div>
-                    <div className="monitoring-card__score-label">Accessibility Score</div>
-                    {lastScanLabel && (
-                      <div className="monitoring-card__score-time">Last scan: {lastScanLabel}</div>
+                    {isScoreLoading ? (
+                      <>
+                        <div className="skeleton" style={{ width: 52, height: 32, borderRadius: 6, marginBottom: 4 }} />
+                        <div className="monitoring-card__score-label">Accessibility Score</div>
+                        <div className="skeleton" style={{ width: 84, height: 12, borderRadius: 4, marginTop: 4 }} />
+                      </>
+                    ) : (
+                      <>
+                        <div className="monitoring-card__score-val" style={{ color: scoreColor }}>
+                          {score !== null ? score : '--'}
+                        </div>
+                        <div className="monitoring-card__score-label">Accessibility Score</div>
+                        {lastScanLabel ? (
+                          <div className="monitoring-card__score-time">Last scan: {lastScanLabel}</div>
+                        ) : (
+                          <div className="monitoring-card__score-time">Initial scan queued</div>
+                        )}
+                      </>
                     )}
                   </div>
                   <div className="monitoring-card__score-right">
-                    {score !== null ? (
+                    {isScoreLoading ? (
+                      <div className="skeleton" style={{ width: 56, height: 56, borderRadius: '50%' }} />
+                    ) : score !== null ? (
                       <ScoreRing score={score} size={56} />
                     ) : (
                       <div className="monitoring-card__score-ring-placeholder">
                         <span>N/A</span>
                       </div>
                     )}
-                    <MiniSparkline scans={siteScans} />
+                    {!isScoreLoading && <MiniSparkline scans={siteScans} />}
                   </div>
                 </div>
 
                 {/* Violations Summary */}
-                {latestScan && (
+                {isScoreLoading ? (
+                  <div style={{ display: 'flex', gap: 6, margin: '2px 0' }}>
+                    <div className="skeleton" style={{ width: 64, height: 20, borderRadius: 6 }} />
+                    <div className="skeleton" style={{ width: 64, height: 20, borderRadius: 6 }} />
+                  </div>
+                ) : latestScan ? (
                   <div className="monitoring-card__violations">
                     {latestScan.critical_count > 0 && (
                       <span className="monitoring-card__violation-chip monitoring-card__violation-chip--critical">
@@ -420,7 +493,7 @@ export default function MonitoringPage() {
                       </span>
                     )}
                   </div>
-                )}
+                ) : null}
 
                 {/* Next Scan */}
                 {nextScanLabel && site.status !== 'paused' && (

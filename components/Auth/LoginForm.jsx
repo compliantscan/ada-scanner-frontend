@@ -49,7 +49,7 @@ export default function LoginForm() {
       });
 
       if (signInError) throw signInError;
-      
+
       router.push('/dashboard');
     } catch (err) {
       setStatus({ loading: false, error: err.message || 'Something went wrong. Try again.' });

@@ -50,7 +50,7 @@ export default function SignupForm() {
       });
 
       if (signUpError) throw signUpError;
-      
+
       router.push('/dashboard');
     } catch (err) {
       setStatus({ loading: false, error: err.message || 'Something went wrong. Try again.' });
