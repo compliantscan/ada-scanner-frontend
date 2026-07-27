@@ -11,6 +11,9 @@ import Contact from '@/components/Contact/Contact';
 import Footer from '@/components/Footer/Footer';
 
 export const metadata = {
+  title: 'Website Accessibility Scanner for Agencies | CompliantScan',
+  description:
+    'Scan websites for WCAG 2.2 issues, get developer-ready fixes, and generate client-ready accessibility reports with CompliantScan.',
   alternates: {
     canonical: 'https://www.compliantscan.com/',
   },

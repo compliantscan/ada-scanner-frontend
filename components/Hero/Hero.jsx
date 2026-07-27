@@ -10,17 +10,14 @@ export default function Hero() {
       </span>
 
       <h1 className={styles.headline}>
-        Accessibility
+        Website Accessibility
         <br />
-        reports that
-        <br />
-        <em className={styles.headlineAccent}>win client trust.</em>
+        Scanner for <em className={styles.headlineAccent}>Web Agencies</em>
       </h1>
 
       <p className={styles.subhead}>
-        CompliantScan helps agencies find WCAG 2.2 issues, communicate
-        impact clearly, and deliver accessibility improvements with
-        confidence.
+        Find WCAG 2.2 issues, prioritize fixes, and generate client-ready
+        accessibility reports in minutes.
       </p>
 
       <ScannerInput />
