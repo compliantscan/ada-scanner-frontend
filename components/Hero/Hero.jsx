@@ -10,7 +10,7 @@ export default function Hero() {
       </span>
 
       <h1 className={styles.headline}>
-        Website Accessibility
+        Website Accessibility{' '}
         <br />
         Scanner for <em className={styles.headlineAccent}>Web Agencies</em>
       </h1>
