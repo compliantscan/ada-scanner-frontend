@@ -10,9 +10,11 @@ import FAQ from '@/components/FAQ/FAQ';
 import Contact from '@/components/Contact/Contact';
 import Footer from '@/components/Footer/Footer';
 
-
-
-
+export const metadata = {
+  alternates: {
+    canonical: 'https://www.compliantscan.com/',
+  },
+};
 
 export default function Home() {
   return (
