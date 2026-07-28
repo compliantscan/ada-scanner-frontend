@@ -28,6 +28,11 @@ export default function sitemap() {
       priority: 0.7,
     },
     {
+      url: `${baseUrl}/blogs/automated-vs-manual-accessibility-testing`,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
       url: `${baseUrl}/privacy`,
       changeFrequency: "yearly",
       priority: 0.2,

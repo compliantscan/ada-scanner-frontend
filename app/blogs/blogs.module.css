@@ -45,6 +45,11 @@
   background: var(--color-cream-paper);
 }
 
+.articleList {
+  display: grid;
+  gap: 34px;
+}
+
 .articleCard {
   display: grid;
   grid-template-columns: minmax(300px, 0.8fr) minmax(360px, 1.2fr);
