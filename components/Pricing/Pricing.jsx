@@ -161,7 +161,11 @@ export default function Pricing() {
         </div>
 
         <p className={styles.faqLink}>
-          Have more questions? <a href="/#faq">See our FAQ</a>
+          Planning your process? Read our{' '}
+          <a href="/blogs/website-accessibility-audit-checklist-for-agencies">
+            website accessibility audit checklist
+          </a>
+          . Have more questions? <a href="/#faq">See our FAQ</a>.
         </p>
       </div>
     </section>

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import ScannerInput from '../ScannerInput/ScannerInput';
 import styles from './Hero.module.css';
 
@@ -23,6 +24,13 @@ export default function Hero() {
       <div id="scanner">
         <ScannerInput />
       </div>
+      <p className={styles.guideLink}>
+        Preparing a client review? Follow our{' '}
+        <Link href="/blogs/website-accessibility-audit-checklist-for-agencies">
+          website accessibility audit checklist
+        </Link>
+        .
+      </p>
     </div>
   );
 }

@@ -58,6 +58,20 @@
   margin: 0 0 40px;
 }
 
+.guideLink {
+  margin: 18px 0 0;
+  color: var(--color-text-muted);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.guideLink a {
+  color: var(--color-brand-green);
+  font-weight: 650;
+  text-underline-offset: 3px;
+}
+
 @media (max-width: 1024px) {
   .headline {
     font-size: 58px;
