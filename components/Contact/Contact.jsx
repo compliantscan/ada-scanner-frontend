@@ -79,9 +79,9 @@ export default function Contact() {
       <div className={styles.container}>
         <div className={styles.left}>
           <p className={styles.label}>Get in touch</p>
-          <h2 className={styles.heading}>
+          <h1 className={styles.heading}>
             Questions about your site&apos;s accessibility? Let&apos;s talk.
-          </h2>
+          </h1>
           <p className={styles.subheading}>
             Whether you&apos;re evaluating CompliantScan for your agency or
             just have a question about a scan result, reach out directly.

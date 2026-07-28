@@ -24,7 +24,7 @@ const TRUST_ITEMS = [
   { label: 'No credit card required', icon: 'card' },
   { label: '60 second average scan', icon: 'clock' },
   { label: 'Real browser scan', icon: 'browser' },
-  { label: 'WCAG 2.2 compliant', icon: 'shield' },
+  { label: 'WCAG 2.2 checks', icon: 'shield' },
 ];
 
 function GlobeIcon() {

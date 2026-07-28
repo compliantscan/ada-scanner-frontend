@@ -23,6 +23,11 @@ export default function sitemap() {
       priority: 0.9,
     },
     {
+      url: `${baseUrl}/white-label-accessibility-reports`,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
       url: `${baseUrl}/blogs`,
       changeFrequency: "weekly",
       priority: 0.6,

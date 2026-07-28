@@ -39,6 +39,12 @@ export default function Resources() {
             >
               Read the website accessibility audit checklist &rarr;
             </Link>
+            <Link
+              href="/white-label-accessibility-reports"
+              className={styles.readLink}
+            >
+              White-label client reports &rarr;
+            </Link>
           </div>
         </div>
       </div>
