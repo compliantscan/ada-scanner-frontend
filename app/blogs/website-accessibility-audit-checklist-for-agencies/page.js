@@ -431,7 +431,12 @@ export default function AccessibilityAuditChecklistArticle() {
                 </div>
               </div>
               <p>
-                If reporting is part of your service,{' '}
+                Use our{' '}
+                <Link href="/blogs/website-accessibility-report-template">
+                  website accessibility report template for web agencies
+                </Link>{' '}
+                to turn findings into a clear client deliverable. If reporting
+                is part of your service,{' '}
                 <Link href="/pricing">
                   compare CompliantScan accessibility scanner pricing
                 </Link>{' '}

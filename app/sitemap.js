@@ -43,6 +43,11 @@ export default function sitemap() {
       priority: 0.7,
     },
     {
+      url: `${baseUrl}/blogs/website-accessibility-report-template`,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
       url: `${baseUrl}/privacy`,
       changeFrequency: "yearly",
       priority: 0.2,

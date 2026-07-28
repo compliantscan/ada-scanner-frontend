@@ -184,6 +184,17 @@ export default function WhiteLabelReportsPage() {
                             </p>
                             <span className={styles.linkText}>Read Testing Strategy →</span>
                         </Link>
+
+                        <Link href="/blogs/website-accessibility-report-template" className={styles.resourceCard}>
+                            <span className={styles.meta}>Client Reporting</span>
+                            <h3>Website Accessibility Report Template for Web Agencies</h3>
+                            <p>
+                                Use a practical structure for executive summaries,
+                                prioritized findings, developer guidance, and
+                                client next steps.
+                            </p>
+                            <span className={styles.linkText}>Use Report Template →</span>
+                        </Link>
                     </div>
                 </div>
             </section>

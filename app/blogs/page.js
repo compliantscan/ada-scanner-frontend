@@ -32,6 +32,31 @@ export default function BlogsPage() {
           <div className={styles.articleList}>
             <Link
               className={styles.articleCard}
+              href="/blogs/website-accessibility-report-template"
+            >
+              <div className={styles.cardVisual} aria-hidden="true">
+                <span className={styles.visualLabel}>Client reporting</span>
+                <strong>Executive clarity + developer detail</strong>
+                <div className={styles.checkRows}>
+                  <span>Issue priorities</span>
+                  <span>Component patterns</span>
+                  <span>Remediation roadmap</span>
+                </div>
+              </div>
+              <div className={styles.cardContent}>
+                <p className={styles.cardMeta}>Report template · 9 min read</p>
+                <h2>Website Accessibility Report Template for Web Agencies</h2>
+                <p>
+                  Copy a practical report structure for presenting scores,
+                  prioritized findings, developer fixes, and next steps to
+                  agency clients.
+                </p>
+                <span className={styles.readLink}>Use the report template →</span>
+              </div>
+            </Link>
+
+            <Link
+              className={styles.articleCard}
               href="/blogs/automated-vs-manual-accessibility-testing"
             >
               <div className={styles.cardVisual} aria-hidden="true">
