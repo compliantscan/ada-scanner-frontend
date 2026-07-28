@@ -46,8 +46,8 @@ const organizationJsonLd = {
     'CompliantScan helps agencies find WCAG 2.2 issues, communicate impact clearly, and deliver accessibility improvements with confidence.',
   email: 'info@compliantscan.com',
   sameAs: [
-    'https://www.linkedin.com/in/bibek-dahal-8357b4347/',
-    'https://x.com/bibek_dahal0807',
+    'https://x.com/Compliantscans',
+    'https://www.linkedin.com/company/compliantscan/',
   ],
 };
 

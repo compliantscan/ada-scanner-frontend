@@ -40,7 +40,7 @@ const SOCIAL_LINKS = [
   {
     id: 'linkedin',
     label: 'LinkedIn',
-    href: 'https://www.linkedin.com/in/bibek-dahal-8357b4347/',
+    href: 'https://www.linkedin.com/company/compliantscan/',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
         <rect x="3.5" y="3.5" width="17" height="17" rx="2.5" stroke="currentColor" strokeWidth="1.5" />
@@ -58,7 +58,7 @@ const SOCIAL_LINKS = [
   {
     id: 'x',
     label: 'X',
-    href: 'https://x.com/bibek_dahal0807',
+    href: 'https://x.com/Compliantscans',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
         <path d="M4 4l16 16M20 4L4 20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
