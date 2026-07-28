@@ -85,7 +85,7 @@ export default function Pricing() {
       <div className={styles.container}>
         <p className={styles.label}>Pricing</p>
         <h1 className={styles.heading}>
-          Simple pricing that scales with your agency.
+          Simple Pricing for Website Accessibility Scanning
         </h1>
         <p className={styles.subheading}>
           Start free with a single scan. Upgrade when you need ongoing
