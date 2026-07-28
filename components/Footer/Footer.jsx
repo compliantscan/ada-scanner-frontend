@@ -2,6 +2,7 @@ import styles from './Footer.module.css';
 
 const FOOTER_LINKS = {
   Product: [
+    { label: 'WCAG Compliance Checker', href: '/wcag-compliance-checker' },
     { label: 'Features', href: '/#built-for-agencies' },
     { label: 'How it works', href: '/#how-it-works' },
     { label: 'Pricing', href: '/pricing' },

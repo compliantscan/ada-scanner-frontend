@@ -25,7 +25,11 @@ export default function Hero() {
         <ScannerInput />
       </div>
       <p className={styles.guideLink}>
-        Preparing a client review? Follow our{' '}
+        Preparing a client review? Use our{' '}
+        <Link href="/wcag-compliance-checker">
+          WCAG compliance checker
+        </Link>{' '}
+        or follow our{' '}
         <Link href="/blogs/website-accessibility-audit-checklist-for-agencies">
           website accessibility audit checklist
         </Link>

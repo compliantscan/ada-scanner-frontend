@@ -18,6 +18,11 @@ export default function sitemap() {
       priority: 0.5,
     },
     {
+      url: `${baseUrl}/wcag-compliance-checker`,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
       url: `${baseUrl}/blogs`,
       changeFrequency: "weekly",
       priority: 0.6,

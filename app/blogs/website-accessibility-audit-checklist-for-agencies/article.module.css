@@ -4,7 +4,7 @@
 }
 
 .hero {
-  padding: 82px 48px 76px;
+  padding: 48px 48px 64px;
   background:
     radial-gradient(circle at 82% 16%, rgba(39, 100, 70, 0.16), transparent 28%),
     var(--color-cream);

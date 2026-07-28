@@ -162,7 +162,11 @@ export default function Pricing() {
         </div>
 
         <p className={styles.faqLink}>
-          Planning your process? Read our{' '}
+          Want to test a site before choosing a plan? Run the{' '}
+          <Link href="/wcag-compliance-checker">
+            WCAG compliance checker
+          </Link>
+          . Planning your process? Read our{' '}
           <Link href="/blogs/website-accessibility-audit-checklist-for-agencies">
             website accessibility audit checklist
           </Link>

@@ -80,13 +80,6 @@ export default function AccessibilityAuditChecklistArticle() {
       <article className={styles.article}>
         <header className={styles.hero}>
           <div className={styles.heroInner}>
-            <nav className={styles.breadcrumbs} aria-label="Breadcrumb">
-              <Link href="/">Home</Link>
-              <span aria-hidden="true">/</span>
-              <Link href="/blogs">Guides</Link>
-              <span aria-hidden="true">/</span>
-              <span>Audit checklist</span>
-            </nav>
             <p className={styles.eyebrow}>Agency accessibility field guide</p>
             <h1>Website Accessibility Audit Checklist for Web Agencies</h1>
             <p className={styles.deck}>
@@ -226,7 +219,16 @@ export default function AccessibilityAuditChecklistArticle() {
                 </Link>{' '}
                 to identify likely hotspots, then spend manual testing time on
                 the pages and components with the greatest user or business
-                impact.
+                impact. The{' '}
+                <Link href="/wcag-compliance-checker">
+                  WCAG compliance checker guide
+                </Link>{' '}
+                explains exactly which automated WCAG 2.2 checks are included.
+                For a deeper analysis of combining software detection with
+                human review, read our guide on{' '}
+                <Link href="/blogs/automated-vs-manual-accessibility-testing">
+                  automated vs manual accessibility testing
+                </Link>.
               </p>
             </section>
 

@@ -80,13 +80,6 @@ export default function AutomatedVsManualAccessibilityTestingArticle() {
       <article className={styles.article}>
         <header className={styles.hero}>
           <div className={styles.heroInner}>
-            <nav className={styles.breadcrumbs} aria-label="Breadcrumb">
-              <Link href="/">Home</Link>
-              <span aria-hidden="true">/</span>
-              <Link href="/blogs">Guides</Link>
-              <span aria-hidden="true">/</span>
-              <span>Automated vs manual testing</span>
-            </nav>
             <p className={styles.eyebrow}>Agency accessibility field guide</p>
             <h1>{articleTitle}</h1>
             <p className={styles.deck}>
@@ -190,7 +183,12 @@ export default function AutomatedVsManualAccessibilityTestingArticle() {
                 This breadth is valuable before launch and after releases. A
                 scan can catch a regression introduced by a CMS template,
                 design-system update, or third-party widget before an account
-                manager discovers it during a client presentation.
+                manager discovers it during a client presentation. Agencies can
+                use the{' '}
+                <Link href="/wcag-compliance-checker">
+                  CompliantScan WCAG compliance checker
+                </Link>{' '}
+                for this automated first pass before beginning manual review.
               </p>
             </section>
 
@@ -464,10 +462,10 @@ export default function AutomatedVsManualAccessibilityTestingArticle() {
               </p>
               <div className={styles.ctaActions}>
                 <Link className={styles.primaryButton} href="/#scanner">
-                  Scan a client website
+                  Scan a website for accessibility issues
                 </Link>
                 <Link className={styles.secondaryButton} href="/pricing">
-                  Compare accessibility scanning plans
+                  Compare accessibility scanner pricing
                 </Link>
               </div>
             </section>
