@@ -24,12 +24,13 @@ export const metadata = {
 
 const structuredData = {
   '@context': 'https://schema.org',
-  '@type': 'Article',
+  '@type': 'BlogPosting',
   headline: 'Website Accessibility Audit Checklist for Web Agencies',
   description:
     'A practical website accessibility audit checklist for agencies covering automated tests, manual WCAG checks, client reporting, and rescanning.',
   datePublished: '2026-07-28',
   dateModified: '2026-07-28',
+  url: articleUrl,
   author: {
     '@type': 'Organization',
     name: 'CompliantScan',
@@ -40,7 +41,10 @@ const structuredData = {
     name: 'CompliantScan',
     url: 'https://www.compliantscan.com/',
   },
-  mainEntityOfPage: articleUrl,
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': articleUrl,
+  },
 };
 
 export default function AccessibilityAuditChecklistArticle() {
