@@ -20,7 +20,9 @@ export default function Hero() {
         accessibility reports in minutes.
       </p>
 
-      <ScannerInput />
+      <div id="scanner">
+        <ScannerInput />
+      </div>
     </div>
   );
 }

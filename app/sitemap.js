@@ -18,6 +18,16 @@ export default function sitemap() {
       priority: 0.5,
     },
     {
+      url: `${baseUrl}/blogs`,
+      changeFrequency: "weekly",
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/blogs/website-accessibility-audit-checklist-for-agencies`,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
       url: `${baseUrl}/privacy`,
       changeFrequency: "yearly",
       priority: 0.2,
