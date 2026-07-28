@@ -253,7 +253,7 @@ export default function AutomatedVsManualAccessibilityTestingArticle() {
                 with no explanation?
               </p>
 
-              <div className={styles.codeExample}>
+              <div className={`${styles.codeExample} ${styles.testCase}`}>
                 <span>Practical test case</span>
                 <div>
                   <code>

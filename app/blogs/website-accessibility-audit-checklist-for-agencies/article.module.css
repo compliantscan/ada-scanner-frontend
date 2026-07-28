@@ -277,6 +277,27 @@
   border-radius: 12px;
 }
 
+.testCase > div {
+  grid-template-columns: 1fr;
+  gap: 18px;
+  padding: 22px;
+  overflow-wrap: normal;
+}
+
+.testCase code {
+  display: block;
+  padding: 16px 18px;
+  color: var(--color-text-primary);
+  white-space: normal;
+  overflow-wrap: break-word;
+  background: #f6f3ec;
+  border-radius: 10px;
+}
+
+.testCase p {
+  margin: 0;
+}
+
 .badLabel,
 .goodLabel {
   padding: 3px 7px;
@@ -353,9 +374,11 @@
   background: var(--color-brand-green);
 }
 
-.reportExample > div:first-child {
+.reportExample > div {
   display: grid;
-  gap: 5px;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
 }
 
 .reportExample strong {
@@ -367,6 +390,24 @@
 .reportExample small,
 .reportExample > div > span {
   color: rgba(255, 255, 255, 0.72);
+}
+
+.reportExample h3 {
+  margin: 4px 0 2px;
+  color: #fff;
+}
+
+.reportExample p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.reportExample .tag {
+  width: max-content;
+  max-width: 100%;
+  margin-bottom: 4px;
+  color: var(--color-brand-green);
+  background: #f1f5ef;
 }
 
 .severityGrid {
