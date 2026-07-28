@@ -12,17 +12,57 @@ import Contact from '@/components/Contact/Contact';
 import Footer from '@/components/Footer/Footer';
 
 export const metadata = {
-  title: 'Website Accessibility Scanner for Agencies | CompliantScan',
+  title: 'CompliantScan | Website Accessibility Scanner for Agencies',
   description:
     'Scan websites for WCAG 2.2 issues, get developer-ready fixes, and generate client-ready accessibility reports with CompliantScan.',
   alternates: {
     canonical: 'https://www.compliantscan.com/',
   },
+  openGraph: {
+    title: 'CompliantScan | Website Accessibility Scanner for Agencies',
+    description:
+      'Scan websites for WCAG 2.2 issues, get developer-ready fixes, and generate client-ready accessibility reports with CompliantScan.',
+    url: 'https://www.compliantscan.com/',
+    siteName: 'CompliantScan',
+    type: 'website',
+  },
+};
+
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'CompliantScan',
+  alternateName: 'Compliant Scan',
+  url: 'https://www.compliantscan.com/',
+};
+
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'CompliantScan',
+  url: 'https://www.compliantscan.com/',
+  logo: 'https://www.compliantscan.com/logo.png',
+  description:
+    'CompliantScan helps agencies find WCAG 2.2 issues, communicate impact clearly, and deliver accessibility improvements with confidence.',
+  email: 'info@compliantscan.com',
+  sameAs: [
+    'https://www.linkedin.com/in/bibek-dahal-8357b4347/',
+    'https://x.com/bibek_dahal0807',
+  ],
 };
 
 export default function Home() {
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+      />
+
       <Navbar />
 
       <section className={styles.heroSection}>
