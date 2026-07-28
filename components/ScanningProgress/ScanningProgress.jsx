@@ -35,7 +35,11 @@ function getDomain(value) {
 
 async function readResponse(response) {
   const body = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(body.message || body.error || `The scan could not start (${response.status}).`);
+  if (!response.ok) {
+    const error = new Error(body.message || body.error || `The scan request failed (${response.status}).`);
+    error.status = response.status;
+    throw error;
+  }
   return body;
 }
 
@@ -109,14 +113,47 @@ export default function ScanningProgress({ mode = 'public' }) {
     };
 
     const runPublicScan = async () => {
-      const payload = await readResponse(await fetch(`${getApiUrl()}/scan`, {
+      const apiUrl = getApiUrl();
+      const started = await readResponse(await fetch(`${apiUrl}/scan/start`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: targetUrl }),
         signal: controller.signal,
       }));
-      sessionStorage.setItem('adaScanResult', JSON.stringify(payload));
-      await completeAndNavigate('/results', payload.homepageScreenshot);
+      const jobId = started.jobId;
+      if (!jobId) throw new Error('The scan started without a tracking ID. Please try again.');
+
+      let consecutivePollFailures = 0;
+      for (let attempt = 0; attempt < 180; attempt += 1) {
+        await wait(attempt === 0 ? 700 : 1200, controller.signal);
+        let poll;
+        try {
+          poll = await readResponse(await fetch(
+            `${apiUrl}/scan/status/${encodeURIComponent(jobId)}`,
+            { cache: 'no-store', signal: controller.signal }
+          ));
+          consecutivePollFailures = 0;
+        } catch (pollError) {
+          if (pollError?.name === 'AbortError') throw pollError;
+          const retryable = !pollError?.status || pollError.status >= 500;
+          consecutivePollFailures += 1;
+          if (retryable && consecutivePollFailures <= 5) continue;
+          throw pollError;
+        }
+        const realProgress = Number(poll.progress || 0);
+        if (realProgress > progressRef.current) setProgress(Math.min(realProgress, 96));
+
+        if (poll.status === 'failed') {
+          throw new Error(poll.error || 'The scan could not be completed.');
+        }
+        if (poll.status === 'completed' && poll.result) {
+          sessionStorage.setItem('adaScanResult', JSON.stringify(poll.result));
+          await completeAndNavigate('/results', poll.result.homepageScreenshot);
+          return;
+        }
+      }
+
+      throw new Error('The scan is taking longer than expected. Please try again.');
     };
 
     const runDashboardScan = async () => {
