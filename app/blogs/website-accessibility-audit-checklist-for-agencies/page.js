@@ -1,10 +1,15 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import Navbar from '@/components/Navbar/Navbar';
 import Footer from '@/components/Footer/Footer';
 import styles from './article.module.css';
 
 const articleUrl =
   'https://www.compliantscan.com/blogs/website-accessibility-audit-checklist-for-agencies';
+const featuredImageUrl =
+  'https://www.compliantscan.com/website-accessibility-audit-checklist.png';
+const featuredImageAlt =
+  'Website accessibility audit checklist showing keyboard, contrast, screen reader, and content checks';
 
 export const metadata = {
   title: 'Website Accessibility Audit Checklist for Web Agencies',
@@ -19,6 +24,21 @@ export const metadata = {
       'A practical WCAG audit process for testing client websites, prioritizing fixes, and presenting results.',
     type: 'article',
     url: articleUrl,
+    images: [
+      {
+        url: featuredImageUrl,
+        width: 1200,
+        height: 675,
+        alt: featuredImageAlt,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Website Accessibility Audit Checklist for Web Agencies',
+    description:
+      'A practical WCAG audit process for testing client websites, prioritizing fixes, and presenting results.',
+    images: [featuredImageUrl],
   },
 };
 
@@ -41,6 +61,7 @@ const structuredData = {
     name: 'CompliantScan',
     url: 'https://www.compliantscan.com/',
   },
+  image: featuredImageUrl,
   mainEntityOfPage: {
     '@type': 'WebPage',
     '@id': articleUrl,
@@ -77,6 +98,16 @@ export default function AccessibilityAuditChecklistArticle() {
               <span>Updated July 28, 2026</span>
               <span>12 minute read</span>
             </div>
+            <figure className={styles.featuredImage}>
+              <Image
+                src="/website-accessibility-audit-checklist.png"
+                alt={featuredImageAlt}
+                width={1200}
+                height={675}
+                priority
+                sizes="(max-width: 1040px) 100vw, 980px"
+              />
+            </figure>
           </div>
         </header>
 
