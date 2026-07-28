@@ -48,8 +48,8 @@ const structuredData = {
   headline: 'Website Accessibility Audit Checklist for Web Agencies',
   description:
     'A practical website accessibility audit checklist for agencies covering automated tests, manual WCAG checks, client reporting, and rescanning.',
-  datePublished: '2026-07-28',
-  dateModified: '2026-07-28',
+  datePublished: '2026-07-28T10:19:00+05:30',
+  dateModified: '2026-07-28T11:57:05+05:30',
   url: articleUrl,
   author: {
     '@type': 'Organization',
@@ -220,9 +220,9 @@ export default function AccessibilityAuditChecklistArticle() {
                 </div>
               </div>
               <p>
-                Agencies can begin with a{' '}
+                Agencies can start by choosing to{' '}
                 <Link href="/#scanner">
-                  free automated website accessibility scan
+                  scan a website for accessibility issues
                 </Link>{' '}
                 to identify likely hotspots, then spend manual testing time on
                 the pages and components with the greatest user or business
@@ -430,8 +430,10 @@ export default function AccessibilityAuditChecklistArticle() {
               </div>
               <p>
                 If reporting is part of your service,{' '}
-                <Link href="/pricing">compare CompliantScan plans</Link> for
-                ongoing monitoring and client-ready reports. The deliverable
+                <Link href="/pricing">
+                  compare CompliantScan accessibility scanner pricing
+                </Link>{' '}
+                for ongoing monitoring and client-ready reports. The deliverable
                 should help the client approve work—not overwhelm them with
                 scanner terminology.
               </p>
@@ -482,10 +484,10 @@ export default function AccessibilityAuditChecklistArticle() {
               </p>
               <div className={styles.ctaActions}>
                 <Link className={styles.primaryButton} href="/#scanner">
-                  Scan a client website
+                  Scan a website for accessibility issues
                 </Link>
-                <Link className={styles.secondaryButton} href="/">
-                  Explore the accessibility scanner
+                <Link className={styles.secondaryButton} href="/pricing">
+                  Compare accessibility scanner pricing
                 </Link>
               </div>
             </section>

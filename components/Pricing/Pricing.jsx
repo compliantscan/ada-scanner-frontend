@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import styles from './Pricing.module.css';
 
 const CHECK_ICON = (
@@ -162,9 +163,9 @@ export default function Pricing() {
 
         <p className={styles.faqLink}>
           Planning your process? Read our{' '}
-          <a href="/blogs/website-accessibility-audit-checklist-for-agencies">
+          <Link href="/blogs/website-accessibility-audit-checklist-for-agencies">
             website accessibility audit checklist
-          </a>
+          </Link>
           . Have more questions? <a href="/#faq">See our FAQ</a>.
         </p>
       </div>

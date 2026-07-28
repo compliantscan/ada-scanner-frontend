@@ -7,6 +7,7 @@ import BuiltForAgencies from '@/components/BuiltForAgencies/BuiltForAgencies';
 import HowItWorks from '@/components/HowItWorks/HowItWorks';
 import Stakes from '@/components/Stakes/Stakes';
 import FAQ from '@/components/FAQ/FAQ';
+import Resources from '@/components/Resources/Resources';
 import Contact from '@/components/Contact/Contact';
 import Footer from '@/components/Footer/Footer';
 
@@ -36,6 +37,7 @@ export default function Home() {
 
       <BuiltForAgencies />
       <HowItWorks />
+      <Resources />
       <FAQ />
       <Contact />
       <Footer />
