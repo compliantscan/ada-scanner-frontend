@@ -1,6 +1,6 @@
 .article {
   color: var(--color-text-primary);
-  background: var(--color-cream-paper);
+  background: var(--color-surface-sage-soft);
 }
 
 .hero {
@@ -189,7 +189,7 @@
 .keyTakeaway {
   margin-top: 34px;
   padding: 26px 28px 4px;
-  background: #edf3ed;
+  background: var(--color-surface-sage);
   border-left: 4px solid var(--color-brand-green);
   border-radius: 0 16px 16px 0;
 }
@@ -208,7 +208,7 @@
 
 .comparison > div {
   padding: 26px;
-  background: #fff;
+  background: var(--color-cream-paper);
   border: 1px solid var(--color-border-strong);
   border-radius: 18px;
 }
@@ -224,7 +224,7 @@
   margin-bottom: 12px;
   padding: 4px 9px;
   color: var(--color-brand-green);
-  background: #e8f1e9;
+  background: var(--color-badge-bg);
   border-radius: 999px;
   font-size: 11px;
   font-weight: 750;
@@ -235,7 +235,7 @@
 .priorityTable {
   overflow: hidden;
   margin: 30px 0;
-  background: #fff;
+  background: var(--color-cream-paper);
   border: 1px solid var(--color-border-strong);
   border-radius: 18px;
   font-size: 14px;
@@ -275,7 +275,7 @@
   align-items: start;
   padding: 16px;
   overflow-wrap: anywhere;
-  background: #fff;
+  background: var(--color-cream-paper);
   border: 1px solid var(--color-border-strong);
   border-radius: 12px;
 }
@@ -325,7 +325,7 @@
 .reportExample {
   margin: 32px 0;
   padding: 28px;
-  background: #fff;
+  background: var(--color-cream-paper);
   border: 1px solid var(--color-border-strong);
   border-radius: 20px;
   box-shadow: 0 16px 36px rgba(27, 48, 38, 0.07);

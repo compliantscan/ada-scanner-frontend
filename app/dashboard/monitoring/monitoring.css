@@ -39,7 +39,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.2s, transform 0.2s;
-  box-shadow: 0 4px 12px rgba(75, 107, 251, 0.25);
+  box-shadow: 0 4px 12px rgba(28, 69, 50, 0.22);
 }
 
 .monitoring-add-btn:hover {
@@ -129,7 +129,7 @@
 /* ── Loading & Skeleton ── */
 
 .skeleton {
-  background: linear-gradient(90deg, #f0f2f5 25%, #e4e7eb 50%, #f0f2f5 75%);
+  background: linear-gradient(90deg, #edf0eb 25%, #e0e5de 50%, #edf0eb 75%);
   background-size: 200% 100%;
   animation: monitoring-shimmer 1.5s infinite ease-in-out;
   border-radius: 6px;

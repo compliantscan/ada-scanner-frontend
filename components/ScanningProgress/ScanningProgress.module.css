@@ -3,14 +3,14 @@
   min-height: 100vh;
   padding: 28px clamp(18px, 4vw, 64px) 54px;
   color: #13201a;
-  background: radial-gradient(circle at 8% 2%, #dcebe2 0, transparent 30rem),
-    radial-gradient(circle at 94% 92%, #f2e9da 0, transparent 28rem), #f4f7f5;
+  background: radial-gradient(circle at 8% 2%, #dfeae1 0, transparent 30rem),
+    radial-gradient(circle at 94% 92%, #eee7da 0, transparent 28rem), var(--color-cream);
 }
 .dashboardPage { min-height: calc(100vh - 76px); margin: -6px; padding: clamp(20px, 3vw, 42px); border-radius: 24px; }
 .brand { display: inline-flex; align-items: center; gap: 11px; margin-bottom: 28px; color: #101b16; font-size: 21px; font-weight: 760; letter-spacing: -.04em; text-decoration: none; }
 .brand img { width: 35px; height: 35px; object-fit: contain; }
-.scanShell { width: min(1180px, 100%); min-height: 670px; margin: auto; display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(390px, .92fr); overflow: hidden; border: 1px solid #dce3de; border-radius: 26px; background: #fff; box-shadow: 0 24px 70px rgba(26,52,39,.11); }
-.previewColumn { padding: clamp(24px,3vw,42px); background: linear-gradient(145deg,#f8f9f7,#eef3ee); border-right: 1px solid #dde5df; }
+.scanShell { width: min(1180px, 100%); min-height: 670px; margin: auto; display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(390px, .92fr); overflow: hidden; border: 1px solid var(--color-border-strong); border-radius: 26px; background: var(--color-cream-paper); box-shadow: 0 24px 70px var(--color-shadow-strong); }
+.previewColumn { padding: clamp(24px,3vw,42px); background: linear-gradient(145deg,var(--color-surface-warm),var(--color-surface-sage)); border-right: 1px solid var(--color-border); }
 .previewHeading { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
 .previewHeading div { min-width: 0; }
 .previewHeading strong { display: block; max-width: 360px; margin-top: 5px; overflow: hidden; font-size: 21px; text-overflow: ellipsis; white-space: nowrap; }

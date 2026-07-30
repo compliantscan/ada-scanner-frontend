@@ -18,17 +18,17 @@
 
 
 :root {
-  --cs-bg: #f8fafd;
-  --cs-card: #ffffff;
-  --cs-border: #ededed;
+  --cs-bg: #f1f3ee;
+  --cs-card: #fffdf8;
+  --cs-border: #dfe3dc;
   --cs-text: #121212;
   --cs-text-muted: #666666;
   --cs-text-secondary: #4b4b4b;
-  --cs-accent: #4b6bfb;
-  --cs-accent-soft: #eef2ff;
-  --cs-accent-muted: rgba(75, 107, 251, 0.12);
-  --cs-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-  --cs-shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.04);
+  --cs-accent: #1c4532;
+  --cs-accent-soft: #e5eee6;
+  --cs-accent-muted: rgba(28, 69, 50, 0.12);
+  --cs-shadow: 0 8px 28px rgba(24, 59, 42, 0.08);
+  --cs-shadow-soft: 0 4px 16px rgba(24, 59, 42, 0.055);
   --cs-radius-sm: 12px;
   --cs-radius-md: 20px;
   --cs-radius-lg: 24px;
@@ -44,8 +44,8 @@
   --cs-yellow-soft: rgba(202, 138, 4, 0.12);
   --cs-purple: #7c3aed;
   --cs-purple-soft: rgba(124, 58, 237, 0.1);
-  --cs-gradient-cta: linear-gradient(135deg, #000000, #2e2e2e);
-  --cs-gradient-plan: linear-gradient(145deg, #000000, #1a1a2e 55%, #16213e);
+  --cs-gradient-cta: linear-gradient(135deg, #143427, #1c4532);
+  --cs-gradient-plan: linear-gradient(145deg, #143427, #1c4532 55%, #276346);
 }
 
 .agency-dashboard {
@@ -730,7 +730,7 @@
 
 .scan-website-card__input-wrap:focus-within {
   border-color: var(--cs-accent);
-  box-shadow: 0 0 0 3px rgba(75, 107, 251, 0.12);
+  box-shadow: 0 0 0 3px rgba(28, 69, 50, 0.12);
 }
 
 .scan-website-card__input-icon {
@@ -837,14 +837,14 @@
   display: inline-flex;
   align-items: center;
   padding: 5px 12px;
-  background: rgba(75, 107, 251, 0.25);
-  border: 1px solid rgba(75, 107, 251, 0.35);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 999px;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #93a8ff;
+  color: #fff;
   margin-bottom: 16px;
   width: fit-content;
 }

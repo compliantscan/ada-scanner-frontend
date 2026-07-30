@@ -1,6 +1,6 @@
 .section {
   width: 100%;
-  background-color: var(--color-cream-paper);
+  background-color: var(--color-surface-sage-soft);
   padding: 96px 80px;
   border-top: 1px solid var(--color-border);
 }
@@ -60,7 +60,7 @@
   padding: 14px 18px;
   border: 1px solid var(--color-border);
   border-radius: 10px;
-  background-color: var(--color-cream);
+  background-color: var(--color-cream-paper);
   color: var(--color-text-primary);
   text-decoration: none;
   font-family: var(--font-sans);
@@ -82,8 +82,8 @@
 /* Right column - form */
 
 .formCard {
-  background-color: var(--color-cream);
-  border: 1px solid var(--color-border);
+  background-color: var(--color-cream-paper);
+  border: 1px solid var(--color-border-strong);
   border-radius: 16px;
   padding: 36px;
   display: flex;
@@ -101,7 +101,7 @@
   font-family: var(--font-sans);
   font-size: 15px;
   color: var(--color-text-primary);
-  background-color: var(--color-cream-paper);
+  background-color: var(--color-surface-warm);
   border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 14px 16px;

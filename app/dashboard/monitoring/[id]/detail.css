@@ -148,7 +148,7 @@
   background: var(--cs-accent);
   border: none;
   color: #fff;
-  box-shadow: 0 4px 12px rgba(75, 107, 251, 0.25);
+  box-shadow: 0 4px 12px rgba(28, 69, 50, 0.22);
 }
 .detail-btn--primary:hover:not(:disabled) {
   opacity: 0.9;

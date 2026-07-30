@@ -2,15 +2,20 @@
 @import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600&display=swap');
 
 :root {
-  --color-cream: #f8f5ee;
-  --color-cream-paper: #fdfcf9;
+  --color-cream: #f4f2eb;
+  --color-cream-paper: #fffdf8;
+  --color-surface-sage: #e9efe9;
+  --color-surface-sage-soft: #f0f4ef;
+  --color-surface-warm: #f8f5ee;
   --color-brand-green: #1c4532;
   --color-brand-green-hover: #143427;
   --color-text-primary: #1a1a18;
   --color-text-secondary: #55534c;
   --color-text-muted: #8a877d;
-  --color-border: rgba(26, 26, 24, 0.08);
-  --color-border-strong: rgba(26, 26, 24, 0.14);
+  --color-border: #dfe3dc;
+  --color-border-strong: #ccd4cb;
+  --color-shadow: rgba(24, 59, 42, 0.08);
+  --color-shadow-strong: rgba(24, 59, 42, 0.13);
 
   --color-critical: #d64545;
   --color-serious: #e08a3c;
@@ -24,7 +29,7 @@
   --header-height: 84px;
 
   /* Badge */
-  --color-badge-bg: #eaf1e9;
+  --color-badge-bg: #e5eee6;
   --color-badge-border: rgba(28, 69, 50, 0.14);
   --color-badge-dot: #2f9e58;
 
@@ -32,10 +37,10 @@
   --color-icon-muted: #8a877d;
 
   /* Executive report card */
-  --color-gauge-track: #e7e4da;
-  --color-paper-back-1: #e4ded0;
-  --color-paper-back-2: #c9c2b0;
-  --color-divider: rgba(26, 26, 24, 0.08);
+  --color-gauge-track: #e2e5de;
+  --color-paper-back-1: #e4e8df;
+  --color-paper-back-2: #cbd4c9;
+  --color-divider: #dfe3dc;
 }
 
 :focus-visible {
@@ -57,7 +62,7 @@ html {
 
 body {
   font-family: 'Switzer', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #f8fafd;
+  background: var(--color-cream);
   color: #121212;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -79,9 +84,10 @@ body {
   width: 800px;
   max-width: 100%;
   height: 60px;
-  background: #fff;
+  background: var(--color-cream-paper);
   border-radius: 18px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 10px 30px var(--color-shadow);
   padding: 0 24px;
   display: flex;
   align-items: center;
@@ -259,7 +265,7 @@ body {
 
 .mobile-menu-link:hover,
 .mobile-menu-link:active {
-  background: #f8fafd;
+  background: var(--color-surface-sage-soft);
   color: #000;
 }
 
@@ -274,15 +280,17 @@ body {
   align-items: center;
   justify-content: center;
   padding: 32px 20px;
-  background: linear-gradient(135deg, #f8fafd 0%, #eef3ff 100%);
+  background:
+    radial-gradient(circle at 18% 12%, rgba(28, 69, 50, 0.1), transparent 34%),
+    linear-gradient(135deg, var(--color-cream) 0%, var(--color-surface-sage) 100%);
 }
 
 .auth-card {
   width: min(100%, 460px);
-  background: #fff;
-  border: 1px solid #e6ebf2;
+  background: var(--color-cream-paper);
+  border: 1px solid var(--color-border-strong);
   border-radius: 24px;
-  box-shadow: 0 18px 48px rgba(13, 27, 44, 0.08);
+  box-shadow: 0 18px 48px var(--color-shadow);
   padding: 32px;
 }
 
@@ -297,7 +305,7 @@ body {
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #4b6bfb;
+  color: var(--color-brand-green);
 }
 
 .auth-header h1 {
@@ -329,18 +337,18 @@ body {
 
 .auth-field input {
   width: 100%;
-  border: 1px solid #d8e0e8;
+  border: 1px solid var(--color-border-strong);
   border-radius: 14px;
   padding: 12px 14px;
   font-size: 15px;
   color: #121212;
-  background: #fff;
+  background: var(--color-surface-warm);
 }
 
 .auth-field input:focus {
   outline: none;
-  border-color: #4b6bfb;
-  box-shadow: 0 0 0 3px rgba(75, 107, 251, 0.16);
+  border-color: var(--color-brand-green);
+  box-shadow: 0 0 0 3px rgba(28, 69, 50, 0.14);
 }
 
 .auth-button {
@@ -356,7 +364,7 @@ body {
 }
 
 .auth-button-secondary {
-  background: #fff;
+  background: var(--color-cream-paper);
   color: #121212;
   border: 1px solid #d8e0e8;
 }
@@ -371,7 +379,7 @@ body {
 }
 
 .auth-link {
-  color: #4b6bfb;
+  color: var(--color-brand-green);
   text-decoration: none;
   font-weight: 600;
 }
@@ -469,7 +477,7 @@ body {
 }
 
 .auth-switch a {
-  color: #4b6bfb;
+  color: var(--color-brand-green);
   text-decoration: none;
   font-weight: 600;
 }
@@ -564,8 +572,8 @@ input {
   flex: 1;
   height: 48px;
   padding: 0 16px;
-  background: #f8fafd;
-  border: 1px solid #ededed;
+  background: var(--color-surface-warm);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   color: #121212;
   font-family: 'Switzer', sans-serif;
@@ -846,7 +854,7 @@ button:disabled {
 }
 
 .section-wrap {
-  background: #f8fafd;
+  background: var(--color-surface-sage-soft);
 }
 
 .section-content {
@@ -1016,7 +1024,7 @@ button:disabled {
 
 /* Pricing — Maxwell Design */
 .pricing-section-wrap {
-  background: #f8fafd;
+  background: var(--color-surface-sage-soft);
   padding: 32px 32px;
 }
 
@@ -2067,7 +2075,7 @@ a.contact-detail-value:hover {
 
 .locked-cta:hover,
 .locked-cta:focus-visible {
-  color: #2563eb;
+  color: var(--color-brand-green);
   text-decoration: underline;
   text-decoration-color: currentColor;
 }
@@ -2080,9 +2088,9 @@ a.contact-detail-value:hover {
 }
 
 .report-violation-card {
-  background: #fff;
-  border: 1px solid #ededed;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  background: var(--color-cream-paper);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 8px 24px var(--color-shadow);
   border-radius: 24px;
   padding: 32px;
 }
@@ -2137,8 +2145,8 @@ a.contact-detail-value:hover {
 }
 
 .detail-grid>div {
-  background: #f8fafd;
-  border: 1px solid #ededed;
+  background: var(--color-surface-sage-soft);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 12px 16px;
   display: flex;
@@ -2164,8 +2172,8 @@ a.contact-detail-value:hover {
 /* ── Code blocks ── */
 .code-block,
 .fix-preview {
-  background: #f8fafd;
-  border: 1px solid #ededed;
+  background: var(--color-surface-sage-soft);
+  border: 1px solid var(--color-border);
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 16px;
@@ -2241,8 +2249,8 @@ code {
   max-width: 360px;
   height: 48px;
   padding: 0 16px;
-  background: #f8fafd;
-  border: 1px solid #ededed;
+  background: var(--color-surface-warm);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   color: #121212;
   font-family: 'Switzer', sans-serif;
@@ -2410,8 +2418,8 @@ code {
 .ss-input {
   height: 48px;
   padding: 10px 16px;
-  background: #f8fafd;
-  border: 1px solid #ededed;
+  background: var(--color-surface-warm);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   color: #121212;
   font-family: 'Switzer', sans-serif;
@@ -2457,8 +2465,8 @@ code {
 }
 
 .ss-modal-right {
-  background: #f8fafd;
-  border-left: 1px solid #ededed;
+  background: var(--color-surface-sage-soft);
+  border-left: 1px solid var(--color-border);
   padding: 48px 40px;
   display: flex;
   flex-direction: column;
@@ -2569,8 +2577,8 @@ tr:last-child td {
 }
 
 .paid-summary-grid>div {
-  background: #f8fafd;
-  border: 1px solid #ededed;
+  background: var(--color-surface-sage-soft);
+  border: 1px solid var(--color-border);
   border-radius: 16px;
   padding: 20px;
   display: flex;
@@ -2673,7 +2681,7 @@ tr:last-child td {
   left: 0;
   right: 0;
   height: 120px;
-  background: linear-gradient(to bottom, transparent, #f8fafd);
+  background: linear-gradient(to bottom, transparent, var(--color-cream));
   pointer-events: none;
   z-index: 1;
 }
@@ -2861,7 +2869,7 @@ tr:last-child td {
   left: 0;
   right: 0;
   height: 120px;
-  background: linear-gradient(to bottom, transparent, #f8fafd);
+  background: linear-gradient(to bottom, transparent, var(--color-cream));
   pointer-events: none;
   z-index: 1;
 }

@@ -68,13 +68,13 @@
   border-radius: 8px;
   padding: 0 16px;
   height: 48px;
-  background: #fff;
+  background: var(--cs-card);
   transition: border-color 0.2s;
 }
 
 .scan-input-wrapper:focus-within {
   border-color: var(--cs-accent);
-  box-shadow: 0 0 0 3px rgba(75, 107, 251, 0.1);
+  box-shadow: 0 0 0 3px rgba(28, 69, 50, 0.1);
 }
 
 .scan-input-icon {
@@ -99,7 +99,7 @@
 .scan-submit-btn {
   height: 48px;
   padding: 0 24px;
-  background: #111827;
+  background: var(--cs-accent);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -114,7 +114,7 @@
 }
 
 .scan-submit-btn:hover {
-  background: #1f2937;
+  background: var(--color-brand-green-hover);
 }
 
 .scan-submit-btn:disabled {
@@ -171,11 +171,11 @@
   align-items: flex-start;
   gap: 16px;
   transition: all 0.2s ease;
-  background: #fff;
+  background: var(--cs-card);
 }
 
 .scan-radio-card:hover {
-  border-color: #d1d5db;
+  border-color: var(--cs-border);
 }
 
 .scan-radio-card--active {
@@ -224,7 +224,7 @@
   width: 40px;
   height: 40px;
   border-radius: 8px;
-  background: #f3f4f6;
+  background: var(--cs-accent-soft);
   display: flex;
   align-items: center;
   justify-content: center;

@@ -1,6 +1,9 @@
 .heroSection {
   width: 100%;
   padding: 56px 48px 110px;
+  background:
+    radial-gradient(circle at 78% 18%, rgba(28, 69, 50, 0.09), transparent 31%),
+    var(--color-cream);
 }
 
 .heroGrid {
