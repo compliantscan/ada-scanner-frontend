@@ -1371,6 +1371,7 @@
   }
 
   .recent-reports__table td:first-child,
+  .recent-reports__table td:last-child,
   .recent-reports__table td[data-label="Actions"],
   .recent-reports__table td[colspan] {
     grid-column: 1 / -1;
