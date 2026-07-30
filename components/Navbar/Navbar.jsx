@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import styles from './Navbar.module.css';
 
 const NAV_LINKS = [
@@ -30,6 +33,8 @@ function ArrowIcon() {
 }
 
 export default function Navbar() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
@@ -58,8 +63,35 @@ export default function Navbar() {
             Start Free Scan
             <ArrowIcon />
           </a>
+          <button
+            type="button"
+            className={styles.menuButton}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-navigation"
+            aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
         </div>
       </div>
+
+      <nav
+        id="mobile-navigation"
+        className={`${styles.mobileNav} ${menuOpen ? styles.mobileNavOpen : ''}`}
+        aria-label="Mobile navigation"
+      >
+        {NAV_LINKS.map((link) => (
+          <a key={link.label} href={link.href} onClick={() => setMenuOpen(false)}>
+            {link.label}
+          </a>
+        ))}
+        <a href="/login" className={styles.mobileSignIn} onClick={() => setMenuOpen(false)}>
+          Sign in
+        </a>
+      </nav>
     </header>
   );
 }

@@ -96,7 +96,7 @@ function ReportThumbnail({ thumbnail, title }) {
 function ReportRow({ report, onDownload, onView }) {
   return (
     <tr>
-      <td>
+      <td data-label="Report">
         <div className="rt-report-col">
           <ReportThumbnail thumbnail={report.thumbnail} title={report.title} />
           <div className="rt-report-info">
@@ -105,32 +105,32 @@ function ReportRow({ report, onDownload, onView }) {
           </div>
         </div>
       </td>
-      <td>
+      <td data-label="Risk level">
         <span className={`rt-badge rt-badge--${report.riskBadge}`}>
           {report.riskLevel}
         </span>
       </td>
-      <td>
+      <td data-label="Scan type">
         <span className={`rt-badge ${report.scanType === 'Full Website' ? 'rt-badge--green' : 'rt-badge--blue'}`}>
           <Icon name={report.scanType === 'Full Website' ? 'globe' : 'file'} />
           {report.scanType}
         </span>
       </td>
-      <td>
+      <td data-label="Report type">
         <span className={`rt-badge rt-badge--${report.reportBadge}`}>
           {report.reportType}
         </span>
       </td>
-      <td>
+      <td data-label="Score">
         <ScoreRing score={report.score} size={40} />
       </td>
-      <td>
+      <td data-label="Generated">
         <div className="rt-date">
           <span>{report.dateStr}</span>
           <span>{report.timeStr}</span>
         </div>
       </td>
-      <td>
+      <td data-label="Actions">
         <div className="rt-actions">
           <button className="rt-action-btn" aria-label="View" onClick={() => onView(report)}>
             <Icon name="eye" />
@@ -269,9 +269,6 @@ export default function ReportsPage() {
               All Time <Icon name="chevron" />
             </div>
           </div>
-
-          {/* gap between Date Range and Export All */}
-          <div style={{ width: 24 }} />
 
           <button className="reports-export-btn">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

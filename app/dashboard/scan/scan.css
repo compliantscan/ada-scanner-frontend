@@ -376,14 +376,44 @@
 }
 
 @media (max-width: 768px) {
+  .scan-card {
+    padding: 22px 18px;
+    border-radius: 18px;
+  }
+
+  .scan-divider {
+    margin-right: -18px;
+    margin-left: -18px;
+  }
+
   .scan-input-group {
     flex-direction: column;
   }
+
+  .scan-input-wrapper {
+    min-width: 0;
+  }
+
+  .scan-submit-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
   .scan-grid-2, .scan-grid-3 {
     grid-template-columns: 1fr;
   }
   .scan-privacy-banner {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .scan-error {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .scan-error-retry {
+    width: 100%;
+    margin-left: 0;
   }
 }

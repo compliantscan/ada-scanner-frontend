@@ -6,7 +6,7 @@ import Icon from '../Icons/Icons';
 import { useDashboard } from '../../../app/context/DashboardContext';
 import { getSupabaseClient } from '../../../lib/supabaseClient';
 
-export default function Topbar() {
+export default function Topbar({ onMenuOpen }) {
   const { user } = useDashboard();
   const router = useRouter();
   const [popupOpen, setPopupOpen] = useState(false);
@@ -34,12 +34,22 @@ export default function Topbar() {
 
   return (
     <header className="dashboard-topbar">
-      <a href="/dashboard" className="dashboard-topbar__logo">
-        <span className="dashboard-topbar__logo-icon">
-          <img src="/compliantscan-mark.png" alt="" />
-        </span>
-        <span className="dashboard-topbar__logo-text">CompliantScan</span>
-      </a>
+      <div className="dashboard-topbar__brand-group">
+        <button
+          type="button"
+          className="dashboard-mobile-toggle"
+          onClick={onMenuOpen}
+          aria-label="Open navigation menu"
+        >
+          <Icon name="menu" />
+        </button>
+        <a href="/dashboard" className="dashboard-topbar__logo">
+          <span className="dashboard-topbar__logo-icon">
+            <img src="/compliantscan-mark.png" alt="" />
+          </span>
+          <span className="dashboard-topbar__logo-text">CompliantScan</span>
+        </a>
+      </div>
 
       <div className="dashboard-topbar__actions-row">
         {/* Notification bell */}

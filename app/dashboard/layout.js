@@ -14,18 +14,9 @@ function DashboardLayoutInner({ children }) {
 
   return (
     <div className="agency-dashboard">
-      <Topbar />
+      <Topbar onMenuOpen={() => setSidebarOpen(true)} />
 
       <div className="agency-dashboard__body">
-        <button
-          type="button"
-          className="dashboard-mobile-toggle"
-          onClick={() => setSidebarOpen(true)}
-          aria-label="Open navigation menu"
-        >
-          <Icon name="menu" />
-        </button>
-
         <Sidebar
           open={sidebarOpen}
           onClose={() => setSidebarOpen(false)}

@@ -182,7 +182,7 @@ export default function RecentReportsTable({ reports = [], isInitialLoading = fa
             {/* Real data rows */}
             {reports.map((report) => (
               <tr key={report.id}>
-                <td>
+                <td data-label="Website">
                   <div className="recent-reports__website">
                     <div className="recent-reports__site-icon">
                       <Icon name="globe" />
@@ -193,30 +193,30 @@ export default function RecentReportsTable({ reports = [], isInitialLoading = fa
                     </div>
                   </div>
                 </td>
-                <td>
+                <td data-label="Scan type">
                   <span className={`recent-reports__badge recent-reports__badge--${report.scanTypeVariant}`}>
                     {report.scanType}
                   </span>
                 </td>
-                <td>{report.pages}</td>
-                <td>
+                <td data-label="Pages">{report.pages}</td>
+                <td data-label="Score">
                   <ScoreRing score={report.score} />
                 </td>
-                <td>
+                <td data-label="Violations">
                   <ViolationCell
                     violations={report.violations}
                     violationsChange={report.violationsChange}
                   />
                 </td>
-                <td>
+                <td data-label="Risk level">
                   <span className={`recent-reports__badge recent-reports__badge--${report.riskVariant}`}>
                     {report.riskLevel}
                   </span>
                 </td>
-                <td>
+                <td data-label="Scanned">
                   <span className="recent-reports__date">{formatDate(report.scannedAt)}</span>
                 </td>
-                <td>
+                <td data-label="Actions">
                   <div className="recent-reports__actions">
                     <button
                       type="button"

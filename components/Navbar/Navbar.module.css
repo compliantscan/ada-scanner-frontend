@@ -110,6 +110,32 @@
   flex-shrink: 0;
 }
 
+.menuButton {
+  width: 44px;
+  height: 44px;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0;
+  color: var(--color-text-primary);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.menuButton span {
+  width: 18px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 999px;
+}
+
+.mobileNav {
+  display: none;
+}
+
 @media (max-width: 1024px) {
   .navList {
     gap: 24px;
@@ -124,6 +150,57 @@
   .nav {
     display: none;
   }
+
+  .menuButton {
+    display: flex;
+  }
+
+  .mobileNav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: grid;
+    gap: 4px;
+    max-height: 0;
+    padding: 0 20px;
+    overflow: hidden;
+    visibility: hidden;
+    background: var(--color-cream);
+    border-bottom: 1px solid transparent;
+    opacity: 0;
+    transition: max-height 0.24s ease, padding 0.24s ease, opacity 0.2s ease;
+  }
+
+  .mobileNavOpen {
+    max-height: 480px;
+    padding-top: 12px;
+    padding-bottom: 20px;
+    visibility: visible;
+    border-bottom-color: var(--color-border);
+    box-shadow: 0 18px 35px rgba(26, 26, 24, 0.08);
+    opacity: 1;
+  }
+
+  .mobileNav a {
+    display: flex;
+    align-items: center;
+    min-height: 46px;
+    padding: 0 12px;
+    color: var(--color-text-primary);
+    border-radius: 9px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .mobileNav a:hover {
+    background: var(--color-badge-bg);
+  }
+
+  .mobileSignIn {
+    border-top: 1px solid var(--color-border);
+  }
 }
 
 @media (max-width: 640px) {
@@ -136,11 +213,38 @@
   }
 
   .cta {
-    padding: 10px 16px;
+    padding: 10px 13px;
     font-size: 14px;
   }
 
   .logoText {
     font-size: 18px;
+  }
+
+  .actions {
+    gap: 8px;
+  }
+}
+
+@media (max-width: 420px) {
+  .inner {
+    padding: 0 14px;
+  }
+
+  .logo {
+    gap: 7px;
+  }
+
+  .logoMark {
+    width: 25px;
+    height: 25px;
+  }
+
+  .logoText {
+    font-size: 16px;
+  }
+
+  .cta {
+    display: none;
   }
 }

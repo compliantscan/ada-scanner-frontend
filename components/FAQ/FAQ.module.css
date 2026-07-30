@@ -58,6 +58,10 @@
   font-weight: 600;
   font-size: 16.5px;
   color: var(--color-text-primary);
+  height: auto;
+  min-height: 68px;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .icon {
@@ -100,5 +104,6 @@
   .question {
     font-size: 15px;
     padding: 20px 4px;
+    line-height: 1.45;
   }
 }
