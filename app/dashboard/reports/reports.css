@@ -421,7 +421,7 @@
 
   .reports-table tbody tr {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 12px 16px;
     padding: 18px;
     background: var(--cs-card);
