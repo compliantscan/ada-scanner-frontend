@@ -26,10 +26,10 @@ const STATS = [
 
 export default function StatsBar() {
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} data-reveal>
       <div className={styles.inner}>
         {STATS.map((stat) => (
-          <div key={stat.value} className={styles.stat}>
+          <div key={stat.value} className={styles.stat} data-reveal-item>
             <p className={styles.value}>
               {stat.value}
               {stat.suffix && <span className={styles.suffix}> {stat.suffix}</span>}

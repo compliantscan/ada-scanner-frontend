@@ -10,6 +10,7 @@ import FAQ from '@/components/FAQ/FAQ';
 import Resources from '@/components/Resources/Resources';
 import Contact from '@/components/Contact/Contact';
 import Footer from '@/components/Footer/Footer';
+import LandingMotion from '@/components/LandingMotion/LandingMotion';
 
 export const metadata = {
   title: 'CompliantScan | Website Accessibility Scanner for Agencies',
@@ -54,6 +55,7 @@ const organizationJsonLd = {
 export default function Home() {
   return (
     <main>
+      <LandingMotion />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
@@ -65,7 +67,7 @@ export default function Home() {
 
       <Navbar />
 
-      <section className={styles.heroSection}>
+      <section className={styles.heroSection} data-reveal="hero">
         <div className={styles.heroGrid}>
           <Hero />
           <ExecutiveReportPreview />

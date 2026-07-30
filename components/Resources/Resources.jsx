@@ -3,7 +3,7 @@ import styles from './Resources.module.css';
 
 export default function Resources() {
   return (
-    <section className={styles.section} id="resources">
+    <section className={styles.section} id="resources" data-reveal>
       <div className={styles.container}>
         <p className={styles.label}>Resources & Guides</p>
         <h2 className={styles.heading}>
@@ -13,7 +13,7 @@ export default function Resources() {
           Practical checklists and frameworks to help your agency audit client websites, communicate WCAG findings, and plan remediation.
         </p>
 
-        <div className={styles.card}>
+        <div className={styles.card} data-reveal-item>
           <div className={styles.badgeRow}>
             <span className={styles.categoryBadge}>Agency Field Guide</span>
             <span className={styles.readTime}>12 min read</span>

@@ -26,7 +26,7 @@ const STATS = [
 
 export default function Stakes() {
   return (
-    <section className={styles.section}>
+    <section className={styles.section} data-reveal>
       <div className={styles.container}>
         <p className={styles.label}>The stakes</p>
         <h2 className={styles.heading}>
@@ -40,7 +40,7 @@ export default function Stakes() {
 
         <div className={styles.statsGrid}>
           {STATS.map((stat) => (
-            <div key={stat.id} className={styles.statCard}>
+            <div key={stat.id} className={styles.statCard} data-reveal-item>
               <p className={styles.statValue}>{stat.value}</p>
               <p className={styles.statLabel}>{stat.label}</p>
               <p className={styles.statDetail}>{stat.detail}</p>

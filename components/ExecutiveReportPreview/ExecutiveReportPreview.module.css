@@ -36,6 +36,12 @@
   border-radius: 16px;
   padding: 40px;
   box-shadow: 0 20px 40px rgba(26, 26, 24, 0.06);
+  transition: transform 320ms ease, box-shadow 320ms ease;
+}
+
+.stack:hover .card {
+  transform: translateY(-5px);
+  box-shadow: 0 28px 58px var(--color-shadow-strong);
 }
 
 .header {
@@ -211,6 +217,15 @@
   font-size: 14.5px;
   font-weight: 600;
   color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.viewLink svg {
+  transition: transform 180ms ease;
+}
+
+.viewLink:hover svg {
+  transform: translateX(4px);
 }
 
 @media (max-width: 860px) {
@@ -256,4 +271,24 @@
     margin-left: 19px;
     text-align: left;
   }
+}
+
+@media (prefers-reduced-motion: no-preference) and (min-width: 861px) {
+  .sheetBack {
+    animation: back-sheet-float 7s ease-in-out 1.2s infinite;
+  }
+
+  .sheetMid {
+    animation: mid-sheet-float 8s ease-in-out 1.5s infinite;
+  }
+}
+
+@keyframes back-sheet-float {
+  0%, 100% { transform: rotate(-1.4deg) translateY(0); }
+  50% { transform: rotate(-2deg) translateY(-4px); }
+}
+
+@keyframes mid-sheet-float {
+  0%, 100% { transform: rotate(0.8deg) translateY(0); }
+  50% { transform: rotate(1.25deg) translateY(3px); }
 }

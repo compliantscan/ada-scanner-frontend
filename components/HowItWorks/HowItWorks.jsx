@@ -315,7 +315,7 @@ const TRUST_ITEMS = [
 
 export default function HowItWorks() {
   return (
-    <section className={styles.section}>
+    <section className={styles.section} data-reveal>
       <div className={styles.container}>
         <p className={styles.label}>How it works</p>
         <h2 className={styles.heading}>Simple process. Powerful results.</h2>
@@ -328,7 +328,7 @@ export default function HowItWorks() {
 
         <div className={styles.stepsGrid}>
           {STEPS.map(({ id, title, description, Card }) => (
-            <div key={id} className={styles.stepColumn}>
+            <div key={id} className={styles.stepColumn} data-reveal-item>
               <Card />
               <h3 className={styles.stepTitle}>{title}</h3>
               <p className={styles.stepDescription}>{description}</p>

@@ -4,7 +4,7 @@ import styles from './Hero.module.css';
 
 export default function Hero() {
   return (
-    <div className={styles.left}>
+    <div className={styles.left} data-reveal-item data-hero-copy>
       <span className={styles.badge}>
         <span className={styles.badgeDot} aria-hidden="true" />
         AI-powered accessibility audits

@@ -132,7 +132,7 @@ const ROWS = [
 
 export default function BuiltForAgencies() {
   return (
-    <section id="built-for-agencies" className={styles.section}>
+    <section id="built-for-agencies" className={styles.section} data-reveal>
       <div className={styles.container}>
         <div className={styles.left}>
           <p className={styles.label}>Built for agencies</p>
@@ -154,7 +154,7 @@ export default function BuiltForAgencies() {
             >
               <div className={styles.rowInner}>
                 {row.map((feature) => (
-                  <div key={feature.id} className={styles.featureCard}>
+                  <div key={feature.id} className={styles.featureCard} data-reveal-item>
                     <div className={styles.iconBox}>{feature.icon}</div>
                     <h3 className={styles.featureTitle}>{feature.title}</h3>
                     <p className={styles.featureDescription}>

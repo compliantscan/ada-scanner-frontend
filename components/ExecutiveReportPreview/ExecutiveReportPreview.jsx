@@ -37,7 +37,7 @@ const TOP_ISSUES = [
 
 export default function ExecutiveReportPreview() {
   return (
-    <div className={styles.stack}>
+    <div className={styles.stack} data-reveal-item data-report-preview>
       <div className={styles.sheetBack} aria-hidden="true" />
       <div className={styles.sheetMid} aria-hidden="true" />
 
@@ -88,6 +88,7 @@ export default function ExecutiveReportPreview() {
                 <span
                   className={styles.severityBar}
                   style={{ background: item.colorVar }}
+                  data-report-bar
                 />
               </div>
             ))}
@@ -100,7 +101,7 @@ export default function ExecutiveReportPreview() {
           <p className={styles.sectionLabel}>Top issues</p>
           <ul className={styles.issuesList}>
             {TOP_ISSUES.map((issue) => (
-              <li key={issue.title} className={styles.issueRow}>
+              <li key={issue.title} className={styles.issueRow} data-report-row>
                 <span
                   className={styles.issueDot}
                   style={{ background: issue.colorVar }}

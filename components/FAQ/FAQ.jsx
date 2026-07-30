@@ -50,7 +50,7 @@ export default function FAQ() {
   };
 
   return (
-    <section className={styles.section}>
+    <section className={styles.section} data-reveal>
       <div className={styles.container}>
         <p className={styles.label}>Common questions</p>
         <h2 className={styles.heading}>Before you ask, we&apos;ll answer.</h2>
@@ -59,7 +59,7 @@ export default function FAQ() {
           {FAQS.map((faq) => {
             const isOpen = openId === faq.id;
             return (
-              <div key={faq.id} className={styles.item}>
+              <div key={faq.id} className={styles.item} data-reveal-item>
                 <button
                   type="button"
                   className={styles.question}

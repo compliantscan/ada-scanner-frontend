@@ -75,9 +75,9 @@ export default function Contact() {
   };
 
   return (
-    <section className={styles.section}>
+    <section className={styles.section} data-reveal>
       <div className={styles.container}>
-        <div className={styles.left}>
+        <div className={styles.left} data-reveal-item>
           <p className={styles.label}>Get in touch</p>
           <h1 className={styles.heading}>
             Questions about your site&apos;s accessibility? Let&apos;s talk.
@@ -103,7 +103,7 @@ export default function Contact() {
           </div>
         </div>
 
-        <form className={styles.formCard} onSubmit={handleSubmit}>
+        <form className={styles.formCard} onSubmit={handleSubmit} data-reveal-item>
           <div className={styles.field}>
             <input
               type="text"
