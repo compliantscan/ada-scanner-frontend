@@ -40,14 +40,10 @@ export default function PublicReportPage() {
       try {
         const response = await fetch(`${getApiUrl()}/report/${encodeURIComponent(scanId)}`);
         const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data?.error || 'Unable to load report');
-        }
-
+        if (!response.ok) throw new Error(data?.error || 'Unable to load report');
         setScan(normalizeScanReport(data.scan || data));
-      } catch (err) {
-        setError(err.message || 'Unable to load report');
+      } catch (loadError) {
+        setError(loadError?.message || 'Unable to load report');
       } finally {
         setLoading(false);
       }
@@ -58,40 +54,32 @@ export default function PublicReportPage() {
 
   if (loading) {
     return (
-      <main className="auth-shell">
-        <div className="auth-card">
-          <div className="auth-header">
-            <p className="auth-eyebrow">CompliantScan</p>
-            <h1>Loading report…</h1>
-            <p>Scan ID: {scanId}</p>
+      <main className="public-report-loading" aria-busy="true" aria-label="Loading accessibility report">
+        <div className="public-report-loading__sheet">
+          <div className="public-report-loading__header">
+            <div className="skeleton" style={{ width: 180, height: 24 }} />
+            <div className="skeleton" style={{ width: 92, height: 14 }} />
+          </div>
+          <div className="skeleton" style={{ width: '62%', height: 54, margin: '68px 0 20px' }} />
+          <div className="skeleton" style={{ width: '42%', height: 18, marginBottom: 48 }} />
+          <div className="public-report-loading__cards">
+            {[1, 2, 3].map((item) => (
+              <div key={item} className="skeleton" />
+            ))}
           </div>
         </div>
       </main>
     );
   }
 
-  if (error) {
+  if (error || !scan) {
     return (
       <main className="auth-shell">
         <div className="auth-card">
           <div className="auth-header">
             <p className="auth-eyebrow">CompliantScan</p>
             <h1>Report unavailable</h1>
-            <p>{error}</p>
-          </div>
-        </div>
-      </main>
-    );
-  }
-
-  if (!scan) {
-    return (
-      <main className="auth-shell">
-        <div className="auth-card">
-          <div className="auth-header">
-            <p className="auth-eyebrow">CompliantScan</p>
-            <h1>Public Scan Report</h1>
-            <p>Scan ID: {scanId}</p>
+            <p>{error || 'This report could not be found.'}</p>
           </div>
         </div>
       </main>

@@ -183,13 +183,15 @@ export default function ScanningProgress({ mode = 'public' }) {
         }));
         const scan = poll.scan || poll;
         const results = scan?.results_json || scan?.results || {};
-        const scanStatus = results._status || scan?.status;
+        const scanStatus = String(results._status || scan?.status || poll?.status || '').toLowerCase();
         const realProgress = Number(results._progress || scan?.progress || 0);
 
         if (realProgress > progressRef.current) setProgress(Math.min(realProgress, 96));
         if (results.homepageScreenshot) setScreenshot(results.homepageScreenshot);
-        if (scanStatus === 'failed') throw new Error(results._error || 'The scan could not be completed.');
-        if (scanStatus === 'completed' || realProgress >= 100) {
+        if (['failed', 'error'].includes(scanStatus)) {
+          throw new Error(results._error || 'The scan could not be completed.');
+        }
+        if (['completed', 'complete', 'succeeded'].includes(scanStatus)) {
           await completeAndNavigate(`/dashboard/audit/${scanId}`, results.homepageScreenshot);
           return;
         }

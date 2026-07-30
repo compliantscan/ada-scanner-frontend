@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { getSupabaseClient } from '../../../../lib/supabaseClient';
-import ScanProgress from '../../../../components/Dashboard/Audit/ScanProgress';
 import ReportFree from '../../../../components/ReportFree/ReportFree';
 import { getApiUrl } from '../../../../lib/apiUrl';
 
@@ -34,7 +33,6 @@ export default function AuditPage() {
   const [scanRow, setScanRow] = useState(null);
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [status, setStatus] = useState('queued');
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -60,11 +58,16 @@ export default function AuditPage() {
         }
         const payload = await resp.json();
         if (!mounted) return;
-        setScanRow(payload.scan || payload);
-        const s = (payload.scan && payload.scan.results_json && payload.scan.results_json._status) || (payload.results_json && payload.results_json._status) || 'queued';
-        setStatus(s);
-
-        if (s === 'completed') {
+        const currentScan = payload.scan || payload;
+        const currentResults = currentScan?.results_json || currentScan?.results || {};
+        setScanRow(currentScan);
+        const s = String(
+          currentResults._status ||
+          currentScan?.status ||
+          payload?.status ||
+          (Array.isArray(currentResults?.violations) ? 'completed' : 'scanning'),
+        ).toLowerCase();
+        if (['completed', 'complete', 'succeeded'].includes(s)) {
           const repResp = await fetch(`${apiUrl}/dashboard/report/${encodeURIComponent(auditId)}`, {
             headers: { Authorization: `Bearer ${session.access_token}` },
           });
@@ -78,7 +81,7 @@ export default function AuditPage() {
             setLoading(false);
             clearInterval(pollInterval);
           }
-        } else if (s === 'failed') {
+        } else if (['failed', 'error'].includes(s)) {
           setError((payload.scan && payload.scan.results_json && payload.scan.results_json._error) || 'Scan failed');
           setLoading(false);
           clearInterval(pollInterval);
@@ -107,10 +110,23 @@ export default function AuditPage() {
 
   if (loading) {
     return (
-      <div style={{ background: '#f8fafd', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32 }}>
-        <div style={{ background: '#fff', borderRadius: 28, border: '1px solid #ededed', boxShadow: '0 4px 24px rgba(0,0,0,0.06)', padding: '48px 56px', maxWidth: 480, width: '100%' }}>
-          <ScanProgress status={status} scanRow={scanRow} />
+      <div className="audit-report-loading" aria-busy="true" aria-label="Preparing accessibility report">
+        <div className="audit-report-loading__header">
+          <div>
+            <div className="skeleton" style={{ width: 220, height: 32, marginBottom: 12 }} />
+            <div className="skeleton" style={{ width: 150, height: 16 }} />
+          </div>
+          <div className="skeleton" style={{ width: 88, height: 88, borderRadius: '50%' }} />
         </div>
+        <div className="audit-report-loading__grid">
+          {[1, 2, 3, 4].map((item) => (
+            <div key={item} className="audit-report-loading__metric">
+              <div className="skeleton" style={{ width: '58%', height: 12, marginBottom: 14 }} />
+              <div className="skeleton" style={{ width: '38%', height: 28 }} />
+            </div>
+          ))}
+        </div>
+        <div className="skeleton audit-report-loading__body" />
       </div>
     );
   }

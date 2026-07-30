@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './Auth.module.css';
 import { getSupabaseClient } from '../../lib/supabaseClient';
+import { signInWithGooglePopup } from '../../lib/googleOAuthPopup';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -21,15 +22,10 @@ export default function LoginForm() {
 
     try {
       const supabase = getSupabaseClient();
-      const { error: oauthError } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-
-      if (oauthError) {
-        throw oauthError;
+      const session = await signInWithGooglePopup(supabase);
+      if (session) {
+        router.replace('/dashboard');
+        router.refresh();
       }
     } catch (err) {
       setStatus({ ...status, error: err.message || 'Unable to continue with Google right now.' });
@@ -68,7 +64,7 @@ export default function LoginForm() {
           <path fill="#FBBC05" d="M5.84 14.09A6.6 6.6 0 015.5 12c0-.73.13-1.43.34-2.09V7.07H2.18A11 11 0 001 12c0 1.77.42 3.45 1.18 4.93z" />
           <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1a11 11 0 00-9.82 6.07l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z" />
         </svg>
-        {googleLoading ? 'Redirecting...' : 'Continue with Google'}
+        {googleLoading ? 'Waiting for Google...' : 'Continue with Google'}
       </button>
 
       <div className={styles.divider}>
