@@ -13,6 +13,13 @@ const STAGES = [
   { at: 78, title: 'Preparing your results', detail: 'Prioritizing findings and building the report' },
 ];
 
+const FULL_SCAN_STAGES = [
+  { at: 0, title: 'Opening the website', detail: 'Loading the homepage in a real browser' },
+  { at: 8, title: 'Discovering website pages', detail: 'Finding safe, same-domain pages to include' },
+  { at: 18, title: 'Scanning discovered pages', detail: 'Running WCAG 2.2 AA checks page by page' },
+  { at: 90, title: 'Combining website findings', detail: 'Prioritizing issues across the scanned pages' },
+];
+
 function normalizeUrl(value) {
   const trimmed = typeof value === 'string' ? value.trim() : '';
   if (!trimmed) return '';
@@ -77,6 +84,7 @@ export default function ScanningProgress({ mode = 'public' }) {
   const [status, setStatus] = useState('scanning');
   const [error, setError] = useState('');
   const [screenshot, setScreenshot] = useState('');
+  const [pageProgress, setPageProgress] = useState({ completed: 0, discovered: 0, currentUrl: '' });
   const [runNumber, setRunNumber] = useState(0);
   const progressRef = useRef(progress);
 
@@ -90,6 +98,7 @@ export default function ScanningProgress({ mode = 'public' }) {
 
   useEffect(() => {
     if (status !== 'scanning') return undefined;
+    if (mode === 'dashboard' && scanType === 'full') return undefined;
     const timer = setInterval(() => {
       setProgress((current) => {
         const increment = current < 26 ? 5 : current < 58 ? 3 : current < 82 ? 2 : 1;
@@ -97,7 +106,7 @@ export default function ScanningProgress({ mode = 'public' }) {
       });
     }, 1100);
     return () => clearInterval(timer);
-  }, [status, runNumber]);
+  }, [mode, runNumber, scanType, status]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -174,19 +183,38 @@ export default function ScanningProgress({ mode = 'public' }) {
       const scanId = started.scanId || started.id;
       if (!scanId) throw new Error('The scan started without a report ID. Please try again.');
 
-      for (let attempt = 0; attempt < 160; attempt += 1) {
+      let consecutivePollFailures = 0;
+      const maxAttempts = scanType === 'full' ? 480 : 160;
+      for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
         await wait(attempt === 0 ? 900 : 1500, controller.signal);
-        const poll = await readResponse(await fetch(`${apiUrl}/dashboard/scan/${scanId}`, {
-          headers: authHeaders,
-          cache: 'no-store',
-          signal: controller.signal,
-        }));
+        let poll;
+        try {
+          poll = await readResponse(await fetch(`${apiUrl}/dashboard/scan/${scanId}`, {
+            headers: authHeaders,
+            cache: 'no-store',
+            signal: controller.signal,
+          }));
+          consecutivePollFailures = 0;
+        } catch (pollError) {
+          if (pollError?.name === 'AbortError') throw pollError;
+          const retryable = !pollError?.status || pollError.status >= 500;
+          consecutivePollFailures += 1;
+          if (retryable && consecutivePollFailures <= 5) continue;
+          throw pollError;
+        }
         const scan = poll.scan || poll;
         const results = scan?.results_json || scan?.results || {};
         const scanStatus = results._status || scan?.status;
         const realProgress = Number(results._progress || scan?.progress || 0);
 
         if (realProgress > progressRef.current) setProgress(Math.min(realProgress, 96));
+        if (scanType === 'full') {
+          setPageProgress({
+            completed: Number(results._pagesCompleted || 0),
+            discovered: Number(results._pagesDiscovered || 0),
+            currentUrl: results._pageUrl || '',
+          });
+        }
         if (results.homepageScreenshot) setScreenshot(results.homepageScreenshot);
         if (scanStatus === 'failed') throw new Error(results._error || 'The scan could not be completed.');
         if (scanStatus === 'completed' || realProgress >= 100) {
@@ -224,8 +252,12 @@ export default function ScanningProgress({ mode = 'public' }) {
     };
   }, [mode, reportType, router, runNumber, scanType, targetUrl]);
 
-  const activeStage = STAGES.reduce((active, stage, index) => progress >= stage.at ? index : active, 0);
   const isDashboard = mode === 'dashboard';
+  const stages = isDashboard && scanType === 'full' ? FULL_SCAN_STAGES : STAGES;
+  const activeStage = stages.reduce((active, stage, index) => progress >= stage.at ? index : active, 0);
+  const currentPageLabel = pageProgress.discovered > 0
+    ? `${pageProgress.completed} of ${pageProgress.discovered} pages checked`
+    : 'Discovering pages';
 
   return (
     <main className={`${styles.page} ${isDashboard ? styles.dashboardPage : ''}`}>
@@ -270,7 +302,12 @@ export default function ScanningProgress({ mode = 'public' }) {
               )}
             </div>
           </div>
-          <p className={styles.previewNote}><span><GlobeIcon /></span>We are checking the live page in a real browser.</p>
+          <p className={styles.previewNote}>
+            <span><GlobeIcon /></span>
+            {isDashboard && scanType === 'full'
+              ? `Scanning up to 10 same-domain pages. ${currentPageLabel}.`
+              : 'We are checking the live page in a real browser.'}
+          </p>
         </div>
 
         <div className={styles.statusColumn}>
@@ -283,17 +320,26 @@ export default function ScanningProgress({ mode = 'public' }) {
           </span>
           <h1>{status === 'complete' ? 'Your results are ready' : status === 'error' ? 'We could not finish this scan' : `Scanning ${domain}`}</h1>
           <p className={styles.statusLead}>
-            {status === 'complete' ? 'Opening your accessibility report now.' : status === 'error' ? error : 'Keep this page open while we inspect the site and prepare a clear, prioritized report.'}
+             {status === 'complete'
+               ? 'Opening your accessibility report now.'
+               : status === 'error'
+                 ? error
+                 : isDashboard && scanType === 'full'
+                   ? 'Keep this page open while we crawl the website and combine the findings into one prioritized report.'
+                   : 'Keep this page open while we inspect the site and prepare a clear, prioritized report.'}
           </p>
 
           {status !== 'error' ? (
             <>
-              <div className={styles.progressMeta}><span>{status === 'complete' ? 'Complete' : STAGES[activeStage].title}</span><strong>{Math.round(progress)}%</strong></div>
+              <div className={styles.progressMeta}>
+                <span>{status === 'complete' ? 'Complete' : stages[activeStage].title}</span>
+                <strong>{Math.round(progress)}%</strong>
+              </div>
               <div className={styles.progressTrack} role="progressbar" aria-label="Website scan progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow={Math.round(progress)}>
                 <span style={{ width: `${progress}%` }} />
               </div>
               <ol className={styles.stages}>
-                {STAGES.map((stage, index) => {
+                {stages.map((stage, index) => {
                   const complete = status === 'complete' || index < activeStage;
                   const active = status !== 'complete' && index === activeStage;
                   return (

@@ -147,7 +147,7 @@ export default function ScanPage() {
       <div className="scan-page__header">
         <h1 className="scan-page__title">Start a New Scan</h1>
         <p className="scan-page__subtitle">
-          Scan any website for WCAG 2.2 AA accessibility issues in under 60 seconds.
+          Run a focused page check or crawl up to 10 same-domain pages for WCAG 2.2 AA accessibility issues.
         </p>
       </div>
 
@@ -226,7 +226,7 @@ export default function ScanPage() {
               </div>
               <div className="scan-feature">
                 <span className="scan-feature-icon"><Icon name="check" /></span>
-                Results in under 60 seconds
+                {scanType === 'full' ? 'Up to 10 same-domain pages' : 'Single-page results in under 60 seconds'}
               </div>
             </div>
           )}
@@ -273,7 +273,7 @@ export default function ScanPage() {
               </div>
               <div className="scan-radio-content">
                 <h3 className="scan-radio-title">Full Website</h3>
-                <p className="scan-radio-desc">Crawl and scan your entire website, including all accessible pages.</p>
+                <p className="scan-radio-desc">Crawl and scan up to 10 safe, same-domain pages in one report.</p>
               </div>
             </div>
           </div>

@@ -116,6 +116,18 @@ function friendlyFinding(violation) {
 }
 
 function findingLocation(finding) {
+  if (finding.foundOn) {
+    try {
+      const page = new URL(finding.foundOn);
+      const location = page.pathname === '/' ? 'Homepage' : page.pathname.replace(/\/$/, '');
+      const additionalPages = Math.max(0, (finding.pageUrls?.length || 1) - 1);
+      return additionalPages > 0
+        ? `${location} and ${additionalPages} more page${additionalPages === 1 ? '' : 's'}`
+        : location;
+    } catch {
+      // Fall through to the element-based description for legacy reports.
+    }
+  }
   const target = String(finding.target || '').toLowerCase();
   if (/header|nav|menu/.test(target)) return 'Homepage header navigation';
   if (/footer/.test(target)) return 'Homepage footer';
