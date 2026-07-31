@@ -46,8 +46,11 @@ export default function AuditPage() {
     let mounted = true;
     let pollInterval = null;
     let consecutiveFailures = 0;
+    let requestInFlight = false;
 
     async function fetchStatus() {
+      if (requestInFlight) return;
+      requestInFlight = true;
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) { router.replace('/login'); return; }
@@ -110,6 +113,8 @@ export default function AuditPage() {
         setError(err.message || 'Error polling audit');
         setLoading(false);
         if (pollInterval) clearInterval(pollInterval);
+      } finally {
+        requestInFlight = false;
       }
     }
 
