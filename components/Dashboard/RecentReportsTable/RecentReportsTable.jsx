@@ -80,10 +80,6 @@ function SkeletonRow() {
 
 export default function RecentReportsTable({ reports = [], isInitialLoading = false, title = 'Recent reports', subtitle = 'Your latest accessibility scans and generated reports', showViewAll = true }) {
   const router = useRouter();
-  const completedReports = reports.filter((report) => {
-    const status = String(report.status || report.scanStatus || report.results_json?._status || '').toLowerCase();
-    return !status || ['completed', 'complete', 'succeeded'].includes(status);
-  });
 
   function handleView(report) {
     // Navigate to the authenticated audit page
@@ -159,7 +155,7 @@ export default function RecentReportsTable({ reports = [], isInitialLoading = fa
           </thead>
           <tbody>
             {/* Loading skeleton — only on first load with no data */}
-            {isInitialLoading && completedReports.length === 0 && (
+            {isInitialLoading && reports.length === 0 && (
               <>
                 <SkeletonRow />
                 <SkeletonRow />
@@ -168,7 +164,7 @@ export default function RecentReportsTable({ reports = [], isInitialLoading = fa
             )}
 
             {/* Empty state */}
-            {!isInitialLoading && completedReports.length === 0 && (
+            {!isInitialLoading && reports.length === 0 && (
               <tr>
                 <td colSpan={8} style={{ textAlign: 'center', padding: '40px 20px', color: '#6b7280' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
@@ -184,7 +180,7 @@ export default function RecentReportsTable({ reports = [], isInitialLoading = fa
             )}
 
             {/* Real data rows */}
-            {completedReports.map((report) => (
+            {reports.map((report) => (
               <tr key={report.id}>
                 <td data-label="Website">
                   <div className="recent-reports__website">

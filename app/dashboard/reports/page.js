@@ -83,17 +83,6 @@ function buildReportRow(scan) {
   };
 }
 
-function isCompletedScan(scan) {
-  const status = String(
-    scan?.results_json?._status ||
-    scan?.results?._status ||
-    scan?.status ||
-    '',
-  ).toLowerCase();
-  return ['completed', 'complete', 'succeeded'].includes(status) ||
-    (!status && Array.isArray(scan?.results_json?.violations));
-}
-
 function ReportThumbnail({ thumbnail, title }) {
   return (
     <div className="rt-report-image">
@@ -182,7 +171,7 @@ export default function ReportsPage() {
 
       if (!resp.ok) throw new Error(`Server returned ${resp.status}`);
       const payload = await resp.json();
-      const rows = (payload.scans || []).filter(isCompletedScan).map(buildReportRow);
+      const rows = (payload.scans || []).map(buildReportRow);
       _reportsCache = rows;
       _reportsCacheTime = Date.now();
       setReports(rows);

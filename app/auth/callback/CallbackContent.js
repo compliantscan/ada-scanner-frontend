@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getSupabaseClient } from '../../../lib/supabaseClient';
@@ -10,31 +11,17 @@ export default function CallbackContent() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const finishSignIn = () => {
-      const isPopup = new URLSearchParams(window.location.search).get('popup') === '1';
-      if (isPopup && window.opener && !window.opener.closed) {
-        window.opener.postMessage({ type: 'compliantscan:auth-complete' }, window.location.origin);
-        window.close();
-        return;
-      }
-      router.replace('/dashboard');
-      router.refresh();
-    };
-
     const exchangeCode = async () => {
       const searchParams = new URLSearchParams(window.location.search);
       const hashParams = new URLSearchParams(
-        window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash,
+        window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash
       );
       const code = searchParams.get('code') || hashParams.get('code');
-      const authError =
-        hashParams.get('error_description') ||
-        hashParams.get('error') ||
-        searchParams.get('error_description') ||
-        searchParams.get('error');
+      const hashError = hashParams.get('error_description') || hashParams.get('error');
+      const queryError = searchParams.get('error_description') || searchParams.get('error');
 
-      if (authError) {
-        setError(authError);
+      if (hashError || queryError) {
+        setError(hashError || queryError || 'Google sign-in was cancelled or failed.');
         setLoading(false);
         return;
       }
@@ -42,48 +29,61 @@ export default function CallbackContent() {
       try {
         const supabase = getSupabaseClient();
 
-        if (code) {
-          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-          if (exchangeError) throw exchangeError;
-        } else {
+        if (!code) {
           const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-          if (!session) {
-            throw new Error(sessionError?.message || 'Google sign-in did not return a session.');
+          if (session) {
+            router.replace('/dashboard');
+            return;
           }
-        }
 
-        finishSignIn();
-      } catch (callbackError) {
-        const message = callbackError?.message || 'Unable to complete Google sign-in.';
-        const friendlyMessage = /pkce code verifier/i.test(message)
-          ? 'This sign-in attempt expired. Please start Google sign-in again.'
-          : message;
-        setError(friendlyMessage);
-        setLoading(false);
-        if (window.opener && !window.opener.closed) {
-          window.opener.postMessage(
-            { type: 'compliantscan:auth-error', message: friendlyMessage },
-            window.location.origin,
+          throw new Error(
+            sessionError?.message || 'No authentication code was provided. The callback may have returned a session in the hash or the redirect was incomplete.'
           );
         }
+
+        const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+
+        if (exchangeError) {
+          throw exchangeError;
+        }
+
+        router.replace('/dashboard');
+      } catch (err) {
+        const message = err.message || 'Unable to complete Google sign-in.';
+        setError(
+          /pkce code verifier/i.test(message)
+            ? 'This sign-in attempt has expired. Please start Google sign-in again from this browser.'
+            : message
+        );
+        setLoading(false);
       }
     };
 
     exchangeCode();
   }, [router]);
 
-  if (loading) {
-    return (
-      <main className="auth-redirect" aria-live="polite" aria-label="Completing sign in">
-        <span className="auth-redirect__bar" />
-      </main>
-    );
-  }
-
   return (
-    <main className="auth-redirect auth-redirect--error">
-      <p>{error || 'Google sign-in could not be completed.'}</p>
-      <a href="/login">Return to sign in</a>
+    <main className="auth-shell">
+      <div className="auth-card">
+        <div className="auth-header">
+          <p className="auth-eyebrow">CompliantScan</p>
+          <h1>{loading ? 'Finishing sign in…' : 'Sign in could not be completed'}</h1>
+          <p>
+            {loading
+              ? 'We are completing your Google sign-in now.'
+              : 'Return to the login page and try again in this browser.'}
+          </p>
+        </div>
+
+        {error ? (
+          <div className="auth-message auth-error">
+            <div>{error}</div>
+            <div style={{ marginTop: '12px' }}>
+              <Link href="/login" className="auth-link">Try sign in again</Link>
+            </div>
+          </div>
+        ) : null}
+      </div>
     </main>
   );
 }
