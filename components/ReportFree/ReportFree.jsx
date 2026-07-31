@@ -67,6 +67,7 @@ export default function ReportFree({ scanData, embedded = false }) {
 
   const totalIssues = SEVERITY_SUMMARY.reduce((acc, curr) => acc + curr.value, 0);
   const pagesScanned = scanData?.pages?.length || summary.pagesScanned || 1;
+  const isFullWebsiteScan = scanData?.scanType === 'full' || pagesScanned > 1;
 
   const STATS = [
     {
@@ -120,7 +121,7 @@ export default function ReportFree({ scanData, embedded = false }) {
     severity: v.severity.charAt(0).toUpperCase() + v.severity.slice(1),
     title: v.title || v.description,
     elements: v.affectedElements || 1,
-    pages: Math.min(pagesScanned, v.affectedElements || 1),
+    pages: v.pageUrls?.length || Math.min(pagesScanned, v.affectedElements || 1),
   }));
 
   let domain = 'example.com';
@@ -182,7 +183,7 @@ export default function ReportFree({ scanData, embedded = false }) {
             </div>
             <p className={styles.domain}>{domain}</p>
             <p className={styles.metaText}>Scanned on {scanDate}</p>
-            <p className={styles.metaText}>Scan Type: {pagesScanned > 1 ? 'Full Website Scan' : 'Single Page Scan'}</p>
+            <p className={styles.metaText}>Scan Type: {isFullWebsiteScan ? 'Full Website Scan' : 'Single Page Scan'}</p>
           </div>
 
           <div className={styles.scoreCard}>
