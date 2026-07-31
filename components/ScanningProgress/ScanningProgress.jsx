@@ -199,7 +199,7 @@ export default function ScanningProgress({ mode = 'public' }) {
           if (pollError?.name === 'AbortError') throw pollError;
           const retryable = !pollError?.status || pollError.status >= 500;
           consecutivePollFailures += 1;
-          if (retryable && consecutivePollFailures <= 5) continue;
+          if (retryable && consecutivePollFailures <= 20) continue;
           throw pollError;
         }
         const scan = poll.scan || poll;

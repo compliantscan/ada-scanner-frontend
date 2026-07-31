@@ -45,6 +45,7 @@ export default function AuditPage() {
     const supabase = getSupabaseClient();
     let mounted = true;
     let pollInterval = null;
+    let consecutiveFailures = 0;
 
     async function fetchStatus() {
       try {
@@ -56,8 +57,17 @@ export default function AuditPage() {
         });
         if (!resp.ok) {
           if (resp.status === 404) throw new Error('Audit not found');
+          if (resp.status === 502 || resp.status === 503 || resp.status === 504) {
+            consecutiveFailures += 1;
+            if (consecutiveFailures <= 20) {
+              setLoading(true);
+              setStatus('reconnecting');
+              return;
+            }
+          }
           throw new Error('Unable to fetch audit status');
         }
+        consecutiveFailures = 0;
         const payload = await resp.json();
         if (!mounted) return;
         setScanRow(payload.scan || payload);
@@ -73,6 +83,10 @@ export default function AuditPage() {
             setReport(repPayload.scan || repPayload);
             setLoading(false);
             clearInterval(pollInterval);
+          } else if (repResp.status === 502 || repResp.status === 503 || repResp.status === 504) {
+            consecutiveFailures += 1;
+            setLoading(true);
+            setStatus('reconnecting');
           } else {
             setError('Failed to load final report');
             setLoading(false);
@@ -87,6 +101,12 @@ export default function AuditPage() {
         }
       } catch (err) {
         console.error('Audit polling error:', err);
+        consecutiveFailures += 1;
+        if (consecutiveFailures <= 20 && err.message !== 'Audit not found') {
+          setLoading(true);
+          setStatus('reconnecting');
+          return;
+        }
         setError(err.message || 'Error polling audit');
         setLoading(false);
         if (pollInterval) clearInterval(pollInterval);
@@ -94,8 +114,8 @@ export default function AuditPage() {
     }
 
     if (auditId) {
-      fetchStatus();
       pollInterval = setInterval(fetchStatus, 3000);
+      fetchStatus();
     }
 
     return () => { mounted = false; if (pollInterval) clearInterval(pollInterval); };
