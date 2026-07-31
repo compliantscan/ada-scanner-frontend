@@ -4,11 +4,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './Auth.module.css';
 import { getSupabaseClient } from '../../lib/supabaseClient';
+import { getNextPathFromBrowser, getSiteUrl } from '../../lib/authRedirect';
 
 export default function SignupForm() {
   const router = useRouter();
   const [form, setForm] = useState({ name: '', email: '', password: '' });
-  const [status, setStatus] = useState({ loading: false, error: '' });
+  const [status, setStatus] = useState({ loading: false, error: '', confirmationSent: false });
   const [googleLoading, setGoogleLoading] = useState(false);
 
   const handleChange = (field) => (e) => {
@@ -16,7 +17,7 @@ export default function SignupForm() {
   };
 
   const handleGoogleSignIn = async () => {
-    setStatus({ ...status, error: '' });
+    setStatus({ ...status, error: '', confirmationSent: false });
     setGoogleLoading(true);
 
     try {
@@ -24,7 +25,7 @@ export default function SignupForm() {
       const { error: oauthError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${getSiteUrl()}/auth/callback?next=${encodeURIComponent(getNextPathFromBrowser())}`,
         },
       });
 
@@ -32,32 +33,42 @@ export default function SignupForm() {
         throw oauthError;
       }
     } catch (err) {
-      setStatus({ ...status, error: err.message || 'Unable to continue with Google right now.' });
+      setStatus({ ...status, error: err.message || 'Unable to continue with Google right now.', confirmationSent: false });
       setGoogleLoading(false);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setStatus({ loading: true, error: '' });
+    setStatus({ loading: true, error: '', confirmationSent: false });
 
     try {
       const supabase = getSupabaseClient();
-      const { error: signUpError } = await supabase.auth.signUp({
+      const { data, error: signUpError } = await supabase.auth.signUp({
         email: form.email,
         password: form.password,
-        options: { data: { full_name: form.name } },
+        options: {
+          data: { full_name: form.name },
+          emailRedirectTo: `${getSiteUrl()}/auth/callback?next=${encodeURIComponent(getNextPathFromBrowser())}`,
+        },
       });
 
       if (signUpError) throw signUpError;
 
-      router.push('/dashboard');
+      if (data.session) {
+        router.replace(getNextPathFromBrowser());
+        router.refresh();
+        return;
+      }
+
+      setStatus({ loading: false, error: '', confirmationSent: true });
+      return;
     } catch (err) {
-      setStatus({ loading: false, error: err.message || 'Something went wrong. Try again.' });
+      setStatus({ loading: false, error: err.message || 'Something went wrong. Try again.', confirmationSent: false });
       return;
     }
 
-    setStatus({ loading: false, error: '' });
+    setStatus({ loading: false, error: '', confirmationSent: false });
   };
 
   return (
@@ -84,6 +95,7 @@ export default function SignupForm() {
           placeholder="Your name"
           value={form.name}
           onChange={handleChange('name')}
+          autoComplete="name"
           required
           className={styles.input}
         />
@@ -97,6 +109,7 @@ export default function SignupForm() {
           placeholder="you@agency.com"
           value={form.email}
           onChange={handleChange('email')}
+          autoComplete="email"
           required
           className={styles.input}
         />
@@ -110,6 +123,7 @@ export default function SignupForm() {
           placeholder="At least 8 characters"
           value={form.password}
           onChange={handleChange('password')}
+          autoComplete="new-password"
           required
           minLength={8}
           className={styles.input}
@@ -117,8 +131,13 @@ export default function SignupForm() {
       </div>
 
       {status.error && <p className={styles.errorText}>{status.error}</p>}
+      {status.confirmationSent && (
+        <p role="status" className={styles.successText}>
+          Check your email to confirm your account, then sign in.
+        </p>
+      )}
 
-      <button type="submit" className={styles.submitButton} disabled={status.loading || googleLoading}>
+      <button type="submit" className={styles.submitButton} disabled={status.loading || googleLoading || status.confirmationSent}>
         {status.loading ? 'Creating account...' : 'Sign up with email'}
       </button>
 

@@ -37,8 +37,10 @@ export default function Sidebar({ open, onClose, scansThisMonth = null, monthlyL
   const handleLogout = async () => {
     try {
       const supabase = getSupabaseClient();
-      await supabase.auth.signOut();
-      // The DashboardProvider listener will redirect to /login
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      router.replace('/login');
+      router.refresh();
     } catch (error) {
       console.error('Error logging out:', error);
     }

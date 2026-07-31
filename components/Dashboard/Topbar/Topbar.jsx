@@ -29,7 +29,11 @@ export default function Topbar({ onMenuOpen }) {
 
   const handleLogout = async () => {
     const supabase = getSupabaseClient();
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+      router.replace('/login');
+      router.refresh();
+    }
   };
 
   return (

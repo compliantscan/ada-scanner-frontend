@@ -217,3 +217,10 @@
     font-size: 24px;
   }
 }
+
+.successText {
+  margin: 0;
+  color: var(--color-brand-green);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}

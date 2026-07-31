@@ -234,7 +234,12 @@ export default function ScanReport({ result, variant = 'public', title }) {
       const response = await fetch(`${apiUrl}/collect-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, url: report.url, scanId: report.id }),
+        body: JSON.stringify({
+          email,
+          url: report.url,
+          scanId: report.id,
+          scanAccessKey: report.scanAccessKey,
+        }),
       });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.message || 'Something went wrong - please try again.');

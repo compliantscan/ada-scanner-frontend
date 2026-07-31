@@ -1,15 +1,26 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './Auth.module.css';
 import { getSupabaseClient } from '../../lib/supabaseClient';
+import { getNextPathFromBrowser, getSiteUrl } from '../../lib/authRedirect';
 
 export default function LoginForm() {
   const router = useRouter();
   const [form, setForm] = useState({ email: '', password: '' });
   const [status, setStatus] = useState({ loading: false, error: '' });
   const [googleLoading, setGoogleLoading] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('error') === 'oauth_failed') {
+      setStatus({
+        loading: false,
+        error: 'Google sign-in could not be completed. Please try again.',
+      });
+    }
+  }, []);
 
   const handleChange = (field) => (e) => {
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
@@ -24,7 +35,7 @@ export default function LoginForm() {
       const { error: oauthError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${getSiteUrl()}/auth/callback?next=${encodeURIComponent(getNextPathFromBrowser())}`,
         },
       });
 
@@ -43,16 +54,21 @@ export default function LoginForm() {
 
     try {
       const supabase = getSupabaseClient();
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email: form.email,
         password: form.password,
       });
 
       if (signInError) throw signInError;
+      if (!data.session) throw new Error('A session could not be created. Please try again.');
 
-      router.push('/dashboard');
+      router.replace(getNextPathFromBrowser());
+      router.refresh();
     } catch (err) {
-      setStatus({ loading: false, error: err.message || 'Something went wrong. Try again.' });
+      const message = /invalid login credentials/i.test(err.message || '')
+        ? 'The email or password is incorrect.'
+        : (err.message || 'Something went wrong. Try again.');
+      setStatus({ loading: false, error: message });
       return;
     }
 
@@ -83,6 +99,7 @@ export default function LoginForm() {
           placeholder="you@agency.com"
           value={form.email}
           onChange={handleChange('email')}
+          autoComplete="email"
           required
           className={styles.input}
         />
@@ -99,7 +116,9 @@ export default function LoginForm() {
           placeholder="••••••••"
           value={form.password}
           onChange={handleChange('password')}
+          autoComplete="current-password"
           required
+          minLength={8}
           className={styles.input}
         />
       </div>

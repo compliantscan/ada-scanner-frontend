@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import Icon, { ScoreRing } from '../Icons/Icons';
 import { getApiUrl } from '../../../lib/apiUrl';
+import { getCachedSession } from '../../../lib/supabaseClient';
 
 function formatDate(isoString) {
   const date = new Date(isoString);
@@ -97,10 +98,11 @@ export default function RecentReportsTable({ reports = [], isInitialLoading = fa
     }
     const apiUrl = getApiUrl();
     try {
-      const response = await fetch(`${apiUrl}/lead-report/pdf`, {
+      const session = await getCachedSession();
+      if (!session?.access_token) throw new Error('Please sign in again.');
+      const response = await fetch(`${apiUrl}/dashboard/report/${encodeURIComponent(report.id)}/pdf`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scanId: report.id }),
+        headers: { Authorization: `Bearer ${session.access_token}` },
       });
       if (!response.ok) throw new Error('Download failed');
       const blob = await response.blob();
@@ -115,14 +117,25 @@ export default function RecentReportsTable({ reports = [], isInitialLoading = fa
     }
   }
 
-  function handleShare(report) {
+  async function handleShare(report) {
     if (!report.id) {
       console.log('[Dashboard] Share — no scan id available');
       return;
     }
-    const link = `${window.location.origin}/report/${report.id}`;
-    navigator.clipboard?.writeText(link).catch(() => {});
-    console.log('[Dashboard] Share link copied:', link);
+    try {
+      const session = await getCachedSession();
+      if (!session?.access_token) throw new Error('Please sign in again.');
+      const response = await fetch(`${getApiUrl()}/dashboard/report/${encodeURIComponent(report.id)}/share`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Unable to create share link');
+      const link = data.path ? `${window.location.origin}${data.path}` : data.url;
+      await navigator.clipboard.writeText(link);
+    } catch (error) {
+      console.error('[Dashboard] Share link error:', error.message);
+    }
   }
 
   return (

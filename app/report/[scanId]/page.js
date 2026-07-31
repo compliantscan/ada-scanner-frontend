@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import ScanReport from '../../components/ScanReport';
 import { getApiUrl } from '../../../lib/apiUrl';
+import { getCachedSession } from '../../../lib/supabaseClient';
 
 function normalizeScanReport(scan) {
   if (!scan) return null;
@@ -38,7 +39,17 @@ export default function PublicReportPage() {
       }
 
       try {
-        const response = await fetch(`${getApiUrl()}/report/${encodeURIComponent(scanId)}`);
+        const shareKey = new URLSearchParams(window.location.search).get('key');
+        const session = await getCachedSession().catch(() => null);
+        const endpoint = new URL(`${getApiUrl()}/report/${encodeURIComponent(scanId)}`);
+        if (shareKey) endpoint.searchParams.set('key', shareKey);
+
+        const response = await fetch(endpoint.toString(), {
+          headers: session?.access_token
+            ? { Authorization: `Bearer ${session.access_token}` }
+            : undefined,
+          cache: 'no-store',
+        });
         const data = await response.json();
 
         if (!response.ok) {
